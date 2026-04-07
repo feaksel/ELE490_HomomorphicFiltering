@@ -1,0 +1,28 @@
+# Images (too large for git, user provides their own)
+images/*.tif
+images/*.tiff
+images/*.jpg
+images/*.jpeg
+images/*.png
+!images/.gitkeep
+
+# Results (generated, not tracked)
+results/*
+!results/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
