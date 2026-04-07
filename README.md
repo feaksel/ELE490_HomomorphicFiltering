@@ -2,8 +2,6 @@
 
 This repository is my personal course project for `ELE490 - Fundamentals of Image Processing` at Hacettepe University.
 
-Instead of treating it like a polished product, I am using this repo as a place to document how I am learning homomorphic filtering, testing ideas, and organizing the experiments I want to run for non-uniform illumination correction in grayscale and color images.
-
 ## What I Am Exploring
 
 The main idea behind the project is the classic illumination-reflectance model:
