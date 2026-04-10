@@ -1,49 +1,14 @@
-# Homomorphic Filtering Personal Project
+# Homomorphic Filtering for Non-Uniform Illumination Correction
 
-This repository is my personal course project for `ELE490 - Fundamentals of Image Processing` at Hacettepe University.
+## Course
 
-## What I Am Exploring
+ELE490 - Fundamentals of Image Processing, Hacettepe University
 
-The main idea behind the project is the classic illumination-reflectance model:
+## Description
 
-`f(x, y) = i(x, y) * r(x, y)`
+This project studies blind homomorphic filtering for correcting non-uniform illumination in grayscale and color images. The implementation is intentionally step by step and script-based so each stage of the textbook pipeline can be inspected and presented clearly.
 
-I wanted to better understand how homomorphic filtering separates slow illumination changes from image detail in the frequency domain, and how parameter choices affect the final result. The project follows the textbook pipeline step by step so I can see each stage clearly instead of hiding everything inside one function.
-
-## Why I Built It This Way
-
-I split the work into small scripts because this is easier for me to study, debug, and present. Each script focuses on one part of the project:
-
-- `scripts/01_create_synthetic.py` creates a synthetic uneven-lighting example from `cameraman.tif`
-- `scripts/02_homomorphic_grayscale.py` is meant to hold the main grayscale homomorphic filtering pipeline
-- `scripts/03_parameter_sweep.py` is for testing how `gamma_L`, `gamma_H`, and `D0` change the output
-- `scripts/04_compare_with_heq.py` compares homomorphic filtering with histogram equalization
-- `scripts/05_color_hsi.py` extends the idea to color images by filtering the intensity channel in HSI space
-- `scripts/06_metrics.py` is for basic evaluation such as PSNR and SSIM on the synthetic example
-
-## Current Status
-
-This is still a work in progress. The repo already has the structure, script flow, and experiment plan, but many parts of the implementation are still marked with `TODO`s. I wanted the repository to reflect the actual development process rather than pretend everything is already complete.
-
-## Project Layout
-
-- `images/` stores the input images used for experiments
-- `results/` stores generated figures and outputs
-- `scripts/` contains the step-by-step experiment files
-- `utils/filters.py` contains helper functions for filter construction
-- `DESIGN.md` is my rough planning document for the project
-
-## Input Images
-
-I expect to place these files in `images/` before running the experiments:
-
-- `cameraman.tif` for the synthetic test setup
-- `rice.png` as a standard grayscale test image
-- `photo_1.jpg`
-- `photo_2.jpg`
-- `photo_3.jpg`
-
-The photo files are intended to be my own uneven-lighting examples for the color part of the project.
+The current focus is on grayscale experiments with synthetic illumination patterns and the `rice.png` benchmark. The color HSI pipeline is also prepared and only needs real uneven-lighting photos for final validation.
 
 ## Setup
 
@@ -53,20 +18,65 @@ Install the required packages with:
 pip install -r requirements.txt
 ```
 
-## Planned Script Order
+On this machine, the working interpreter was `py -3.9`, so the scripts were tested with that command style.
 
-When the implementations are filled in, the scripts are intended to be run from the project root in this order:
+## Dataset
+
+Place the input images inside `images/`.
+
+Expected files:
+
+- `cameraman.tif` - grayscale base image for synthetic experiments
+- `rice.png` - grayscale benchmark with non-uniform background illumination
+- `photo_1.jpg`
+- `photo_2.jpg`
+- `photo_3.jpg`
+
+Script `01_create_synthetic.py` also generates:
+
+- `synthetic_vertical.png`
+- `synthetic_rotated.png`
+- `synthetic_sine.png`
+- `synthetic_uneven.png` as the default synthetic test case
+
+## Usage
+
+Run the scripts from the project root:
 
 ```bash
-python scripts/01_create_synthetic.py
-python scripts/02_homomorphic_grayscale.py
-python scripts/03_parameter_sweep.py
-python scripts/04_compare_with_heq.py
-python scripts/05_color_hsi.py
-python scripts/06_metrics.py
+py -3.9 scripts/01_create_synthetic.py
+py -3.9 scripts/02_homomorphic_grayscale.py
+py -3.9 scripts/03_parameter_sweep.py
+py -3.9 scripts/04_compare_with_heq.py
+py -3.9 scripts/05_color_hsi.py
+py -3.9 scripts/06_metrics.py
+py -3.9 scripts/07_padding_windowing_experiment.py
+py -3.9 scripts/08_final_grayscale_pack.py
+py -3.9 scripts/09_flashlight_demo.py
+py -3.9 scripts/10_tunnel_demo.py
 ```
 
-## References I Am Following
+## Recommended Figures
+
+For the strongest grayscale presentation, the most useful output figures are:
+
+- `results/rice_aggressive_comparison.png`
+- `results/homomorphic_multicase_overview.png`
+- `results/synthetic_aggressive_demo.png`
+- `results/synthetic_difference_maps.png`
+- `results/padding_windowing_experiment.png`
+- `results/final_grayscale_demo_pack.png`
+- `results/flashlight_homomorphic_comparison.png`
+- `results/tun_homomorphic_comparison.png`
+- `results/blind_results_table.md`
+
+## Current Project Story
+
+- `rice.png` is the main visual demo because the illumination correction is easy to see there.
+- The synthetic cases are mainly for controlled blind evaluation and PSNR / SSIM reporting.
+- Blind-only results and tuning decisions are tracked in `DESIGN.md`.
+
+## References
 
 - Rafael C. Gonzalez and Richard E. Woods, _Digital Image Processing_, 2nd Edition, Section 4.5
 - Alan V. Oppenheim, Ronald W. Schafer, and Thomas G. Stockham Jr., "Nonlinear Filtering of Multiplied and Convolved Signals," _Proceedings of the IEEE_, 1968
