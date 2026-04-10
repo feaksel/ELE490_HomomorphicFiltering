@@ -74,6 +74,7 @@ Evaluate how effectively homomorphic filtering can correct non-uniform illuminat
 - [2026-04-10] - Added a dedicated flashlight demo script using the newly added `images/flashlight.jpeg` so the project now includes a real grayscale scene with strong flashlight illumination even before the full color photo set is collected.
 - [2026-04-10] - Added a dedicated tunnel demo script using `images/tun.jpg` with a balanced blind restoration and a stronger display-oriented blind restoration so tunnel-style shadow lifting can be demonstrated quickly without expensive parameter searches.
 - [2026-04-10] - Added a post-enhanced tunnel output on top of the blind homomorphic result so the tunnel demo can separate the effect of the blind filter itself from the extra effect of contrast stretching and gamma-based display enhancement.
+- [2026-04-10] - Added tunnel-specific `gamma_L` and `gamma_H` sweep figures so the effect of low-frequency suppression versus high-frequency boost can be compared directly on the same tunnel image before choosing more aggressive flattening settings.
 
 ## Known Issues
 
