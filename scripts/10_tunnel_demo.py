@@ -418,4 +418,251 @@ if __name__ == "__main__":
         "Tunnel Demo: gamma_H Sweep with Fixed gamma_L=0.15",
     )
 
+    flattening_gamma_l_values = [0.35, 0.30, 0.25, 0.20, 0.15, 0.10]
+
+    print("Running focused tunnel flattening sweep...")
+    flattening_images = []
+    flattening_titles = []
+    for gamma_l_value in flattening_gamma_l_values:
+        _, flattening_result, _ = apply_homomorphic(
+            image,
+            gamma_l=gamma_l_value,
+            gamma_h=1.00,
+            d0=120,
+            filter_type="butterworth",
+            order=2,
+            low_percentile=1.0,
+            high_percentile=99.5,
+            display_gamma=0.75,
+        )
+        flattening_images.append(flattening_result)
+        flattening_titles.append(f"gamma_L={gamma_l_value:.2f}\ngamma_H=1.00")
+
+    plot_tunnel_sweep(
+        image,
+        (crop_row_start, crop_row_end, crop_col_start, crop_col_end),
+        flattening_images,
+        flattening_titles,
+        "results/tun_flattening_sweep.png",
+        "Tunnel Demo: Focused Flattening Sweep with Fixed gamma_H=1.00",
+    )
+
+    strong_flattening_configs = [
+        ("Btw gL=0.20 D0=180", 0.20, 1.00, 180, "butterworth", 2),
+        ("Btw gL=0.15 D0=180", 0.15, 1.00, 180, "butterworth", 2),
+        ("Btw gL=0.10 D0=180", 0.10, 1.00, 180, "butterworth", 2),
+        ("Btw gL=0.10 D0=240", 0.10, 1.00, 240, "butterworth", 2),
+        ("Gauss gL=0.15 D0=180", 0.15, 1.00, 180, "gaussian", 2),
+        ("Gauss gL=0.10 D0=240", 0.10, 1.00, 240, "gaussian", 2),
+    ]
+
+    print("Running stronger illumination-flattening sweep...")
+    strong_flattening_images = []
+    strong_flattening_titles = []
+    for label, gamma_l_value, gamma_h_value, d0_value, filter_type_value, order_value in strong_flattening_configs:
+        _, strong_result, _ = apply_homomorphic(
+            image,
+            gamma_l=gamma_l_value,
+            gamma_h=gamma_h_value,
+            d0=d0_value,
+            filter_type=filter_type_value,
+            order=order_value,
+            low_percentile=1.0,
+            high_percentile=99.5,
+            display_gamma=0.75,
+        )
+        strong_flattening_images.append(strong_result)
+        strong_flattening_titles.append(label)
+
+    plot_tunnel_sweep(
+        image,
+        (crop_row_start, crop_row_end, crop_col_start, crop_col_end),
+        strong_flattening_images,
+        strong_flattening_titles,
+        "results/tun_strong_flattening_sweep.png",
+        "Tunnel Demo: Stronger Illumination-Flattening Sweep",
+    )
+
+    extreme_flattening_configs = [
+        ("Gauss gL=0.10 D0=240", 0.10, 1.00, 240, "gaussian", 2),
+        ("Gauss gL=0.08 D0=280", 0.08, 1.00, 280, "gaussian", 2),
+        ("Gauss gL=0.06 D0=320", 0.06, 1.00, 320, "gaussian", 2),
+        ("Gauss gL=0.04 D0=360", 0.04, 1.00, 360, "gaussian", 2),
+        ("Btw1 gL=0.08 D0=280", 0.08, 1.00, 280, "butterworth", 1),
+        ("Btw1 gL=0.05 D0=320", 0.05, 1.00, 320, "butterworth", 1),
+    ]
+
+    print("Running extreme blind flattening sweep...")
+    extreme_flattening_images = []
+    extreme_flattening_titles = []
+    for label, gamma_l_value, gamma_h_value, d0_value, filter_type_value, order_value in extreme_flattening_configs:
+        _, extreme_result, _ = apply_homomorphic(
+            image,
+            gamma_l=gamma_l_value,
+            gamma_h=gamma_h_value,
+            d0=d0_value,
+            filter_type=filter_type_value,
+            order=order_value,
+            low_percentile=1.0,
+            high_percentile=99.5,
+            display_gamma=0.75,
+        )
+        extreme_flattening_images.append(extreme_result)
+        extreme_flattening_titles.append(label)
+
+    plot_tunnel_sweep(
+        image,
+        (crop_row_start, crop_row_end, crop_col_start, crop_col_end),
+        extreme_flattening_images,
+        extreme_flattening_titles,
+        "results/tun_extreme_flattening_sweep.png",
+        "Tunnel Demo: Extreme Blind Flattening Sweep",
+    )
+
+    print("Saving selected flattening-focused tunnel result...")
+    _, flattening_reference, _ = apply_homomorphic(
+        image,
+        gamma_l=0.35,
+        gamma_h=1.00,
+        d0=120,
+        filter_type="butterworth",
+        order=2,
+        low_percentile=1.0,
+        high_percentile=99.5,
+        display_gamma=0.75,
+    )
+    Image.fromarray(flattening_reference).save("results/tun_homomorphic_restored_flattening_reference.png")
+
+    _, flattening_selected, _ = apply_homomorphic(
+        image,
+        gamma_l=0.20,
+        gamma_h=1.00,
+        d0=120,
+        filter_type="butterworth",
+        order=2,
+        low_percentile=1.0,
+        high_percentile=99.5,
+        display_gamma=0.75,
+    )
+    Image.fromarray(flattening_selected).save("results/tun_homomorphic_restored_flattening.png")
+
+    _, strong_flattening_selected, _ = apply_homomorphic(
+        image,
+        gamma_l=0.10,
+        gamma_h=1.00,
+        d0=240,
+        filter_type="gaussian",
+        order=2,
+        low_percentile=1.0,
+        high_percentile=99.5,
+        display_gamma=0.75,
+    )
+    Image.fromarray(strong_flattening_selected).save("results/tun_homomorphic_restored_strong_flattening.png")
+
+    _, extreme_flattening_selected, _ = apply_homomorphic(
+        image,
+        gamma_l=0.06,
+        gamma_h=1.00,
+        d0=320,
+        filter_type="gaussian",
+        order=2,
+        low_percentile=1.0,
+        high_percentile=99.5,
+        display_gamma=0.75,
+    )
+    Image.fromarray(extreme_flattening_selected).save("results/tun_homomorphic_restored_extreme_flattening.png")
+
+    print("Saving MATLAB-gamma tunnel example...")
+    _, matlab_gamma_result, _ = apply_homomorphic(
+        image,
+        gamma_l=0.0999,
+        gamma_h=1.01,
+        d0=240,
+        filter_type="butterworth",
+        order=2,
+        low_percentile=1.0,
+        high_percentile=99.5,
+        display_gamma=0.75,
+    )
+    Image.fromarray(matlab_gamma_result).save("results/tun_homomorphic_restored_matlab_gamma.png")
+
+    print("Saving clean 2x2 tunnel comparison...")
+    final_compare_figure, final_compare_axes = plt.subplots(2, 2, figsize=(12, 10))
+
+    final_compare_axes[0, 0].imshow(image, cmap="gray", vmin=0, vmax=255)
+    final_compare_axes[0, 0].set_title("Original Tunnel")
+    final_compare_axes[0, 0].set_xlabel("Column")
+    final_compare_axes[0, 0].set_ylabel("Row")
+
+    final_compare_axes[0, 1].imshow(flattening_reference, cmap="gray", vmin=0, vmax=255)
+    final_compare_axes[0, 1].set_title("Blind: gamma_L=0.35, gamma_H=1.00")
+    final_compare_axes[0, 1].set_xlabel("Column")
+    final_compare_axes[0, 1].set_ylabel("Row")
+
+    final_compare_axes[1, 0].imshow(flattening_selected, cmap="gray", vmin=0, vmax=255)
+    final_compare_axes[1, 0].set_title("Blind: gamma_L=0.20, gamma_H=1.00")
+    final_compare_axes[1, 0].set_xlabel("Column")
+    final_compare_axes[1, 0].set_ylabel("Row")
+
+    final_compare_axes[1, 1].imshow(extreme_flattening_selected, cmap="gray", vmin=0, vmax=255)
+    final_compare_axes[1, 1].set_title("Blind: Extreme Flattening")
+    final_compare_axes[1, 1].set_xlabel("Column")
+    final_compare_axes[1, 1].set_ylabel("Row")
+
+    final_compare_figure.suptitle("Tunnel Demo: 2x2 Comparison of Blind Flattening Choices")
+    final_compare_figure.tight_layout()
+    final_compare_figure.savefig("results/tun_final_2x2_comparison.png", dpi=200)
+    plt.close(final_compare_figure)
+
+    print("Saving MATLAB-gamma comparison...")
+    matlab_compare_figure, matlab_compare_axes = plt.subplots(1, 3, figsize=(15, 5.5))
+
+    matlab_compare_axes[0].imshow(image, cmap="gray", vmin=0, vmax=255)
+    matlab_compare_axes[0].set_title("Original Tunnel")
+    matlab_compare_axes[0].set_xlabel("Column")
+    matlab_compare_axes[0].set_ylabel("Row")
+
+    matlab_compare_axes[1].imshow(matlab_gamma_result, cmap="gray", vmin=0, vmax=255)
+    matlab_compare_axes[1].set_title("MATLAB Gamma Example\n(gL=0.0999, gH=1.01)")
+    matlab_compare_axes[1].set_xlabel("Column")
+    matlab_compare_axes[1].set_ylabel("Row")
+
+    matlab_compare_axes[2].imshow(extreme_flattening_selected, cmap="gray", vmin=0, vmax=255)
+    matlab_compare_axes[2].set_title("Current Strong Blind Choice")
+    matlab_compare_axes[2].set_xlabel("Column")
+    matlab_compare_axes[2].set_ylabel("Row")
+
+    matlab_compare_figure.suptitle("Tunnel Demo: MATLAB Gamma Values vs Current Strong Blind Flattening")
+    matlab_compare_figure.tight_layout()
+    matlab_compare_figure.savefig("results/tun_matlab_gamma_comparison.png", dpi=200)
+    plt.close(matlab_compare_figure)
+
+    print("Saving blind-vs-post-enhanced 2x2 tunnel comparison...")
+    enhanced_compare_figure, enhanced_compare_axes = plt.subplots(2, 2, figsize=(12, 10))
+
+    enhanced_compare_axes[0, 0].imshow(image, cmap="gray", vmin=0, vmax=255)
+    enhanced_compare_axes[0, 0].set_title("Original Tunnel")
+    enhanced_compare_axes[0, 0].set_xlabel("Column")
+    enhanced_compare_axes[0, 0].set_ylabel("Row")
+
+    enhanced_compare_axes[0, 1].imshow(flattening_selected, cmap="gray", vmin=0, vmax=255)
+    enhanced_compare_axes[0, 1].set_title("Blind: gamma_L=0.20, gamma_H=1.00")
+    enhanced_compare_axes[0, 1].set_xlabel("Column")
+    enhanced_compare_axes[0, 1].set_ylabel("Row")
+
+    enhanced_compare_axes[1, 0].imshow(strong_flattening_selected, cmap="gray", vmin=0, vmax=255)
+    enhanced_compare_axes[1, 0].set_title("Blind: Strong Flattening")
+    enhanced_compare_axes[1, 0].set_xlabel("Column")
+    enhanced_compare_axes[1, 0].set_ylabel("Row")
+
+    enhanced_compare_axes[1, 1].imshow(post_enhanced, cmap="gray", vmin=0, vmax=255)
+    enhanced_compare_axes[1, 1].set_title("Blind + Post Enhancement")
+    enhanced_compare_axes[1, 1].set_xlabel("Column")
+    enhanced_compare_axes[1, 1].set_ylabel("Row")
+
+    enhanced_compare_figure.suptitle("Tunnel Demo: Strong Blind Flattening vs Post Enhancement")
+    enhanced_compare_figure.tight_layout()
+    enhanced_compare_figure.savefig("results/tun_blind_vs_post_2x2.png", dpi=200)
+    plt.close(enhanced_compare_figure)
+
     print("Done! Tunnel demo saved.")

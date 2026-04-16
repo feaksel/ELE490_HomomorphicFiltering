@@ -1,8 +1,8 @@
 """
 Script 09: Blind homomorphic filtering on the flashlight image.
 This script converts the flashlight scene to grayscale, applies a
-balanced blind filter and a slightly stronger variant, and saves
-comparison figures to the results folder.
+balanced blind filter and the current tunnel-derived strong blind
+standard, and saves comparison figures to the results folder.
 """
 import os
 import sys
@@ -15,18 +15,31 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.filters import make_butterworth_homomorphic, make_gaussian_homomorphic
 
 
-def normalize_to_uint8(image_array):
-    min_value = np.min(image_array)
-    max_value = np.max(image_array)
+def normalize_percentile_to_uint8(image_array, low_percentile=1.0, high_percentile=99.5, display_gamma=0.75):
+    low_value = np.percentile(image_array, low_percentile)
+    high_value = np.percentile(image_array, high_percentile)
 
-    if max_value - min_value < 1e-10:
+    if high_value - low_value < 1e-10:
         return np.zeros_like(image_array, dtype=np.uint8)
 
-    scaled = 255.0 * (image_array - min_value) / (max_value - min_value)
+    scaled = (image_array - low_value) / (high_value - low_value)
+    scaled = np.clip(scaled, 0, 1)
+    scaled = scaled ** display_gamma
+    scaled = 255.0 * scaled
     return scaled.astype(np.uint8)
 
 
-def apply_homomorphic(image_array, gamma_l, gamma_h, d0, filter_type, order=2):
+def apply_homomorphic(
+    image_array,
+    gamma_l,
+    gamma_h,
+    d0,
+    filter_type,
+    order=2,
+    low_percentile=1.0,
+    high_percentile=99.5,
+    display_gamma=0.75,
+):
     image_normalized = image_array / 255.0
     log_image = np.log1p(image_normalized)
     F = np.fft.fftshift(np.fft.fft2(log_image))
@@ -42,7 +55,7 @@ def apply_homomorphic(image_array, gamma_l, gamma_h, d0, filter_type, order=2):
     filtered = np.expm1(filtered_log)
     filtered = np.clip(filtered, 0, None)
 
-    return normalize_to_uint8(filtered), H
+    return normalize_percentile_to_uint8(filtered, low_percentile, high_percentile, display_gamma), H
 
 
 if __name__ == "__main__":
@@ -59,11 +72,11 @@ if __name__ == "__main__":
     balanced_gamma_h = 1.0
     balanced_d0 = 180
 
-    aggressive_filter_type = "butterworth"
-    aggressive_gamma_l = 0.3
-    aggressive_gamma_h = 1.2
-    aggressive_d0 = 180
-    aggressive_order = 2
+    standard_filter_type = "gaussian"
+    standard_gamma_l = 0.06
+    standard_gamma_h = 1.00
+    standard_d0 = 320
+    standard_order = 2
 
     print("Running balanced blind filtering...")
     balanced_result, balanced_filter = apply_homomorphic(
@@ -76,21 +89,21 @@ if __name__ == "__main__":
     )
     print(f"  Balanced output range: [{balanced_result.min()}, {balanced_result.max()}]")
 
-    print("Running stronger blind filtering...")
-    aggressive_result, aggressive_filter = apply_homomorphic(
+    print("Running standard strong blind filtering...")
+    standard_result, standard_filter = apply_homomorphic(
         gray_array,
-        aggressive_gamma_l,
-        aggressive_gamma_h,
-        aggressive_d0,
-        aggressive_filter_type,
-        aggressive_order,
+        standard_gamma_l,
+        standard_gamma_h,
+        standard_d0,
+        standard_filter_type,
+        standard_order,
     )
-    print(f"  Aggressive output range: [{aggressive_result.min()}, {aggressive_result.max()}]")
+    print(f"  Standard strong output range: [{standard_result.min()}, {standard_result.max()}]")
 
     print("Saving flashlight demo figures...")
     os.makedirs("results", exist_ok=True)
     Image.fromarray(balanced_result).save("results/flashlight_homomorphic_restored.png")
-    Image.fromarray(aggressive_result).save("results/flashlight_homomorphic_restored_aggressive.png")
+    Image.fromarray(standard_result).save("results/flashlight_homomorphic_restored_standard.png")
 
     crop_row_start = 480
     crop_row_end = 1140
@@ -125,19 +138,19 @@ if __name__ == "__main__":
     axes[1, 0].set_xlabel("Column")
     axes[1, 0].set_ylabel("Row")
 
-    aggressive_plot = axes[1, 1].imshow(aggressive_filter, cmap="viridis")
-    axes[1, 1].set_title("Aggressive Filter")
+    aggressive_plot = axes[1, 1].imshow(standard_filter, cmap="viridis")
+    axes[1, 1].set_title("Standard Strong Filter")
     axes[1, 1].set_xlabel("Frequency Column")
     axes[1, 1].set_ylabel("Frequency Row")
     figure.colorbar(aggressive_plot, ax=axes[1, 1], fraction=0.046, pad=0.04)
 
     axes[1, 2].imshow(
-        aggressive_result[crop_row_start:crop_row_end, crop_col_start:crop_col_end],
+        standard_result[crop_row_start:crop_row_end, crop_col_start:crop_col_end],
         cmap="gray",
         vmin=0,
         vmax=255,
     )
-    axes[1, 2].set_title("Crop: Aggressive Restoration")
+    axes[1, 2].set_title("Crop: Standard Strong Restoration")
     axes[1, 2].set_xlabel("Column")
     axes[1, 2].set_ylabel("Row")
 
@@ -145,5 +158,27 @@ if __name__ == "__main__":
     figure.tight_layout()
     figure.savefig("results/flashlight_homomorphic_comparison.png", dpi=200)
     plt.close(figure)
+
+    standard_figure, standard_axes = plt.subplots(1, 3, figsize=(15, 5.5))
+
+    standard_axes[0].imshow(gray_array, cmap="gray", vmin=0, vmax=255)
+    standard_axes[0].set_title("Original Flashlight Image")
+    standard_axes[0].set_xlabel("Column")
+    standard_axes[0].set_ylabel("Row")
+
+    standard_axes[1].imshow(balanced_result, cmap="gray", vmin=0, vmax=255)
+    standard_axes[1].set_title("Balanced Blind Result")
+    standard_axes[1].set_xlabel("Column")
+    standard_axes[1].set_ylabel("Row")
+
+    standard_axes[2].imshow(standard_result, cmap="gray", vmin=0, vmax=255)
+    standard_axes[2].set_title("Standard Strong Blind Result")
+    standard_axes[2].set_xlabel("Column")
+    standard_axes[2].set_ylabel("Row")
+
+    standard_figure.suptitle("Flashlight Demo: Standard Strong Blind Setting")
+    standard_figure.tight_layout()
+    standard_figure.savefig("results/flashlight_standard_blind_comparison.png", dpi=200)
+    plt.close(standard_figure)
 
     print("Done! Flashlight demo saved.")
