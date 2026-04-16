@@ -6,10 +6,6 @@ images/*.jpeg
 images/*.png
 !images/.gitkeep
 
-# Results (generated, not tracked)
-results/*
-!results/.gitkeep
-
 # Python
 __pycache__/
 *.pyc
