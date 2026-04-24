@@ -67,6 +67,7 @@ if __name__ == "__main__":
     ]
 
     folders = [
+        "analysis",
         "final",
         os.path.join("old", "clahe_rejected"),
         "real_batch",

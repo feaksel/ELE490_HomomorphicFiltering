@@ -1,0 +1,9 @@
+{
+  "selected_method_id": "clahe_t16_c001",
+  "selected_display_name": "CLAHE 16x16 clip=0.01",
+  "selection_rule": "highest average synthetic SSIM, then highest average synthetic PSNR, then lowest average hard-case runtime",
+  "boosted_method_id": "clahe_t16_c001_boosted",
+  "boosted_display_name": "CLAHE 16x16 clip=0.01 + High Boost",
+  "boost_sigma": 1.2,
+  "boost_amount": 0.65
+}

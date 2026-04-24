@@ -60,6 +60,33 @@ def apply_homomorphic(image_array, gamma_l, gamma_h, d0, brighten_gamma):
     return restored, brightened
 
 
+def analyze_homomorphic(image_array, gamma_l, gamma_h, d0, brighten_gamma):
+    image_normalized = image_array / 255.0
+    log_image = np.log1p(image_normalized)
+    transformed = np.fft.fftshift(np.fft.fft2(log_image))
+    rows, cols = image_array.shape
+
+    homomorphic_filter = make_gaussian_homomorphic(rows, cols, d0, gamma_l, gamma_h)
+    filtered_frequency = homomorphic_filter * transformed
+    filtered_log = np.real(np.fft.ifft2(np.fft.ifftshift(filtered_frequency)))
+    filtered = np.expm1(filtered_log)
+    filtered = np.clip(filtered, 0, None)
+
+    restored = normalize_percentile_to_uint8(filtered)
+    brightened = brighten_uint8(restored, gamma=brighten_gamma)
+
+    return {
+        "log_image": log_image,
+        "frequency": transformed,
+        "filter": homomorphic_filter,
+        "filtered_frequency": filtered_frequency,
+        "filtered_log": filtered_log,
+        "filtered_linear": filtered,
+        "restored": restored,
+        "brightened": brightened,
+    }
+
+
 def tone_adjust_shadows_highlights(
     image_uint8,
     blur_sigma=32,
@@ -85,38 +112,49 @@ def tone_adjust_shadows_highlights(
     return normalize_percentile_to_uint8(adjusted, low_percentile=0.5, high_percentile=99.7, display_gamma=0.95)
 
 
-def apply_regular_showcase_pipeline(image_array, base_name):
+def get_showcase_pipeline_config(base_name):
     if base_name == "page":
-        restored, brightened = apply_homomorphic(
-            image_array,
-            gamma_l=0.25,
-            gamma_h=1.00,
-            d0=160,
-            brighten_gamma=0.84,
-        )
-        final_result = tone_adjust_shadows_highlights(
-            brightened,
-            blur_sigma=28,
-            shadow_strength=0.24,
-            highlight_strength=0.20,
-            shadow_pivot=0.58,
-            highlight_pivot=0.42,
-        )
-        pipeline_title = "Conservative HF + Tone Equalization"
-    else:
-        restored, brightened = apply_homomorphic(
-            image_array,
-            gamma_l=0.06,
-            gamma_h=1.00,
-            d0=320,
-            brighten_gamma=0.72,
-        )
-        final_result = tone_adjust_shadows_highlights(brightened)
-        pipeline_title = "Standard HF + Tone Equalization"
+        return {
+            "gamma_l": 0.25,
+            "gamma_h": 1.00,
+            "d0": 160,
+            "brighten_gamma": 0.84,
+            "tone_kwargs": {
+                "blur_sigma": 28,
+                "shadow_strength": 0.24,
+                "highlight_strength": 0.20,
+                "shadow_pivot": 0.58,
+                "highlight_pivot": 0.42,
+            },
+            "title": "Conservative HF + Tone Equalization",
+        }
+
+    return {
+        "gamma_l": 0.06,
+        "gamma_h": 1.00,
+        "d0": 320,
+        "brighten_gamma": 0.72,
+        "tone_kwargs": {},
+        "title": "Standard HF + Tone Equalization",
+    }
+
+
+def apply_regular_showcase_pipeline(image_array, base_name):
+    config = get_showcase_pipeline_config(base_name)
+    restored, brightened = apply_homomorphic(
+        image_array,
+        gamma_l=config["gamma_l"],
+        gamma_h=config["gamma_h"],
+        d0=config["d0"],
+        brighten_gamma=config["brighten_gamma"],
+    )
+    final_result = tone_adjust_shadows_highlights(brightened, **config["tone_kwargs"])
+    pipeline_title = config["title"]
 
     return {
         "restored": restored,
         "brightened": brightened,
         "final": final_result,
         "title": pipeline_title,
+        "config": config,
     }

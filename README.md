@@ -90,6 +90,12 @@ py -3.9 scripts/16_seat_pillar_detail_comparison.py
 py -3.9 scripts/18_page_conservative_hf_comparison.py
 py -3.9 scripts/20_tone_adjusted_showcase.py
 py -3.9 scripts/21_page_detail_comparison.py
+py -3.9 scripts/22_frequency_analysis_showcase.py
+py -3.9 scripts/23_page_pipeline_math.py
+py -3.9 scripts/24_seat_pipeline_math.py
+py -3.9 scripts/25_local_equalization_hard_cases.py
+py -3.9 scripts/26_pretrained_cnn_hard_cases.py
+py -3.9 scripts/27_next_phase_evaluation.py
 ```
 
 ## Recommended Outputs
@@ -104,6 +110,10 @@ If you want the strongest current mid-project figures first, open these:
 - `results/final/uniform_reference_comparison_overview.png`
 - `results/final/cardboard_uniform_reference_comparison.png`
 - `results/final/markers_uniform_reference_comparison.png`
+- `results/analysis/showcase_metric_deltas.png`
+- `results/analysis/showcase_analysis_summary.md`
+- `results/analysis/page_pipeline_math_figure.png`
+- `results/analysis/seat_pipeline_math_figure.png`
 
 ## Results Folder
 
@@ -112,7 +122,23 @@ The `results/` folder is now organized to be easier to navigate:
 - `results/final/` for the current professor-reportable showcase
 - `results/real_batch/` for per-image grayscale, homomorphic, brightened, and tone-equalized outputs for the active photo showcase
 - `results/real_references/` for side-by-side comparisons against the uniform-lighting reference photos
+- `results/analysis/` for before/after histograms, FFT-domain visuals, and metric tables
+- `results/experimental/` for the new local-HEQ, optional CNN, and hard-case evaluation branch
 - `results/old/` for rejected or retired experiments such as CLAHE trials
+
+## Optional CNN Setup
+
+The CNN comparison branch is optional and expects local TorchScript weights.
+Core project requirements stay in `requirements.txt`; the optional CNN branch
+uses:
+
+```bash
+pip install -r requirements-cnn.txt
+```
+
+Script `26_pretrained_cnn_hard_cases.py` looks first for a local
+`Zero-DCE++` TorchScript model, then for a local `RetinexNet` TorchScript
+model. If neither exists, it writes a status note and skips inference.
 
 See `results/README.md` for a short guide.
 

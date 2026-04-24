@@ -1,0 +1,58 @@
+[
+  {
+    "id": "tun",
+    "path": "images/tun.jpg",
+    "label": "Tunnel Backlight",
+    "category": "strong_backlight",
+    "crop_rel": [0.28, 0.36, 0.34, 0.30]
+  },
+  {
+    "id": "page",
+    "path": "images/page.jpeg",
+    "label": "Page Directional Light",
+    "category": "directional_shadow",
+    "crop_rel": [0.12, 0.13, 0.56, 0.18]
+  },
+  {
+    "id": "seat",
+    "path": "images/seat.jpg",
+    "label": "Seat Deep Shadow",
+    "category": "shadow_with_detail",
+    "crop_rel": [0.16, 0.30, 0.30, 0.28]
+  },
+  {
+    "id": "pillar",
+    "path": "images/pillar.jpg",
+    "label": "Pillar Uneven Illumination",
+    "category": "directional_shadow",
+    "crop_rel": [0.32, 0.18, 0.26, 0.34]
+  },
+  {
+    "id": "markers",
+    "path": "images/markers.jpg",
+    "label": "Markers Glare",
+    "category": "specular_and_multiple_light",
+    "crop_rel": [0.18, 0.18, 0.38, 0.38]
+  },
+  {
+    "id": "cardboard",
+    "path": "images/cardboard.jpg",
+    "label": "Cardboard Uneven Light",
+    "category": "multiple_light_sources",
+    "crop_rel": [0.25, 0.28, 0.35, 0.35]
+  },
+  {
+    "id": "carpet",
+    "path": "images/carpet.jpg",
+    "label": "Carpet Texture Stress Test",
+    "category": "texture_under_uneven_light",
+    "crop_rel": [0.18, 0.22, 0.40, 0.36]
+  },
+  {
+    "id": "writing",
+    "path": "images/writing.jpeg",
+    "label": "Writing Side Light",
+    "category": "document_shadow",
+    "crop_rel": [0.20, 0.24, 0.46, 0.24]
+  }
+]
