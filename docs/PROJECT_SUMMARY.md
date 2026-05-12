@@ -113,7 +113,21 @@ over-process fine paper texture.
 - Promoted the page example as the strongest practical document-readability
   use case.
 
-### 6. Validated The HSI Color Extension
+### 6. Added A Quantitative Downstream-Task Result (Handwriting OCR)
+
+- Added `scripts/32_ocr_handwriting_pipeline.py` which runs
+  `microsoft/trocr-large-handwritten` on each line of `writing.jpeg`
+  (real handwriting under a flashlight beam + dark shadow + yellow
+  color cast) after each preprocessor and computes corpus CER and WER
+  against manually-transcribed ground truth.
+- Added `scripts/33_ocr_comparison_figure.py` which produces the
+  report-facing figure at `results/final/ocr_handwriting_comparison.png`.
+- Headline result: HSI HF + Tone reduces corpus CER from `33.1 %` to
+  `25.2 %` (-7.9 absolute points, ~24 % relative). HF + Tone (grayscale)
+  reduces CER to `26.6 %`. Both project pipelines outperform Zero-DCE++
+  (`30.2 %`) and RetinexNet (`28.8 %`) on this downstream consumer.
+
+### 7. Validated The HSI Color Extension
 
 - Added `utils/hsi_pipeline.py` so the accepted grayscale pipeline can run on
   the intensity channel of an RGB image while hue and saturation are
@@ -128,7 +142,7 @@ over-process fine paper texture.
   See `results/final/hsi_cnn_color_comparison.png` and
   `results/experimental/evaluation/hsi_cnn_all_color_overview.png`.
 
-### 7. Standardized the Final Showcase
+### 8. Standardized the Final Showcase
 
 - Added a shared helper in `utils/showcase_pipeline.py`.
 - Unified the active scripts around the same regular pipeline.
@@ -150,6 +164,7 @@ The strongest current figures are:
 - `results/final/markers_uniform_reference_comparison.png`
 - `results/final/cnn_comparison_showcase.png`
 - `results/final/hsi_cnn_color_comparison.png`
+- `results/final/ocr_handwriting_comparison.png`
 
 Note:
 Some filenames still contain older wording such as `hf_bright`, but the active
@@ -196,13 +211,15 @@ The cleanest practical framing for this project is:
 
 ## Remaining Gaps
 
-- most real-image evaluation is still qualitative; the synthetic table backs
-  up the homomorphic baseline quantitatively, but the color HSI and CNN
-  comparisons are visual
+- the OCR benchmark is run on a single handwriting image (8 lines, single
+  writer); statistical power is limited (see `R-006`). The ranking is
+  consistent with the synthetic SSIM table and the visual color comparison,
+  so the three lines of evidence reinforce each other.
 - scene-specific parameter choices should be described honestly in the report
 
 ## Recommended Next Step
 
-If the project needs one stronger final-phase identity, the best next step is
-to measure a practical downstream task, especially document readability or OCR,
-before and after the current pipeline.
+The OCR downstream-task result now exists; the strongest follow-up would be
+to extend the handwriting OCR benchmark to additional bad-scan samples for
+stronger statistical power, or to add a printed-document OCR benchmark on the
+`page` case using Tesseract.

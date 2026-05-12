@@ -87,6 +87,26 @@
   A smaller set is easier to explain and avoids mixing accepted results with
   rejected post-processing branches.
 
+### D-011 Downstream OCR Task Confirms The Pipeline Improves Real-Image Readability
+
+- Status: accepted
+- Decision:
+  Use handwriting OCR (TrOCR `microsoft/trocr-large-handwritten`) on
+  `writing.jpeg` as the project's quantitative real-image
+  validation. Each line is processed through (Original, HF + Tone
+  Gray, HSI HF + Tone, Zero-DCE++, RetinexNet); corpus CER and WER
+  are computed against manually-transcribed ground truth.
+- Why:
+  Synthetic PSNR / SSIM already validates the method in a controlled
+  setting, but `R-001` flagged that real-image success was only
+  qualitative. A downstream task gives an honest quantitative
+  improvement claim that does not rely on a "clean" reference for
+  real photos. On `writing.jpeg`, HSI HF + Tone reduces corpus CER
+  from `33.1 %` to `25.2 %` (-7.9 abs / ~24 % relative); HF + Tone
+  grayscale reduces CER to `26.6 %`. Both project pipelines
+  outperform Zero-DCE++ (`30.2 %`) and RetinexNet (`28.8 %`) on this
+  downstream consumer.
+
 ### D-010 HSI Color Pipeline Reuses The Accepted Grayscale Settings
 
 - Status: accepted
@@ -205,12 +225,14 @@
 
 ### P-001 Final Reporting Direction
 
-- Status: partially resolved (CNN comparison branch closed under `D-009`,
-  HSI color pipeline validated under `D-010`)
-- Remaining options:
-  - stronger real-image quantitative analysis (e.g., OCR / readability on the
-    page case)
-  - broader real-life application examples
+- Status: resolved
+  (CNN comparison closed under `D-009`, HSI color pipeline validated
+  under `D-010`, downstream OCR readability validated under `D-011`).
+- Remaining optional follow-ups for future work:
+  - extending the handwriting OCR benchmark to additional bad-scan
+    samples for stronger n
+  - broader real-life application examples (X-ray, document
+    binarization, etc.)
 
 ### P-002 Final Presentation Scope After Mid-Project Update
 

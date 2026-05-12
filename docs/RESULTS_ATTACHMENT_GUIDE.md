@@ -64,6 +64,12 @@ These are the best files to attach in the main report or presentation:
   homomorphic + tone pipeline, Zero-DCE++ (color), and RetinexNet (color).
   Strongest figure for showing that the project's classical pipeline
   preserves natural hue and saturation while still correcting illumination.
+- `results/final/ocr_handwriting_comparison.png`
+  Quantitative downstream-task figure. 4 representative lines x 5 methods
+  with TrOCR predictions, plus a corpus-level CER/WER bar chart. Backs up
+  the visual claims with numbers: HSI HF + Tone reduces corpus CER from
+  33.1 % to 25.2 % on the writing.jpeg sample; both project pipelines
+  outperform the two pretrained CNN baselines on this task.
 
 ### Good Appendix Attachments
 
@@ -87,6 +93,13 @@ These are useful in an appendix or backup section:
   All-case color comparison (HSI HF + Tone vs Zero-DCE++ vs RetinexNet)
   across every hard case. Backs up the three-case
   `hsi_cnn_color_comparison.png` figure in `results/final/`.
+- `results/experimental/ocr/ocr_method_table.md`
+  Corpus CER / WER / runtime table for the OCR benchmark. The CSV
+  next to it can be used directly in a report appendix.
+- `results/experimental/ocr/per_line_predictions.csv`
+  Per-line predictions and CER values from each method. Good
+  supporting evidence if a reviewer asks how individual lines
+  scored.
 - `results/metrics/blind_multicase_metrics.png`
   Compact synthetic-case metric summary.
 - `results/metrics/metrics_summary.png`

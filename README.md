@@ -31,6 +31,7 @@ conservative setting before the same tone-equalization step.
 - Real-scene grayscale demos are implemented for tunnel, flashlight, and multiple RGB photos converted to grayscale.
 - The Phase-2 comparison branch is complete: local-equalization (CLAHE/AHE) and two pretrained CNN baselines (Zero-DCE++ and a PyTorch port of RetinexNet) have been run against the homomorphic baseline. The homomorphic pipeline remains the synthetic-quality leader; see `results/experimental/evaluation/` and `results/final/cnn_comparison_showcase.png`.
 - The HSI color pipeline is validated. The accepted homomorphic + tone-equalization pipeline now runs end to end on color hard-case images through `utils/hsi_pipeline.py` and `scripts/30_hsi_color_pipeline.py`. Color comparison against the two CNN baselines is at `results/final/hsi_cnn_color_comparison.png` (representative set) and `results/experimental/evaluation/hsi_cnn_all_color_overview.png` (full set).
+- A downstream-task OCR benchmark on bad-scan handwriting (`writing.jpeg`) is in place: TrOCR `microsoft/trocr-large-handwritten` runs on each preprocessor's output and is scored with corpus CER/WER against manually-transcribed ground truth. HSI HF + Tone reduces corpus CER from 33.1 % to 25.2 % (~24 % relative); both project pipelines outperform Zero-DCE++ and RetinexNet. See `results/final/ocr_handwriting_comparison.png` and `results/experimental/ocr/`.
 
 ## Setup
 
@@ -101,7 +102,14 @@ py -3.9 scripts/28_prepare_cnn_models.py
 py -3.9 scripts/29_cnn_comparison_figure.py
 py -3.9 scripts/30_hsi_color_pipeline.py
 py -3.9 scripts/31_hsi_cnn_color_comparison.py
+py -3.9 scripts/32_ocr_handwriting_pipeline.py
+py -3.9 scripts/33_ocr_comparison_figure.py
 ```
+
+Scripts 32/33 also depend on the OCR-only Python packages
+`transformers`, `jiwer`, and `sentencepiece`. Install them on demand
+(they are not part of `requirements.txt` to keep the core install
+small).
 
 Script `28_prepare_cnn_models.py` reads raw `.pth` / `.tar` weights from
 `models/zerodcepp/` and `models/retinexnet/` and writes TorchScript files
@@ -122,6 +130,7 @@ If you want the strongest current mid-project figures first, open these:
 - `results/final/markers_uniform_reference_comparison.png`
 - `results/final/cnn_comparison_showcase.png`
 - `results/final/hsi_cnn_color_comparison.png`
+- `results/final/ocr_handwriting_comparison.png`
 - `results/analysis/showcase_metric_deltas.png`
 - `results/analysis/showcase_analysis_summary.md`
 - `results/analysis/page_pipeline_math_figure.png`

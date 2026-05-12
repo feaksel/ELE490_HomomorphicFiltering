@@ -30,6 +30,7 @@ If you only want the most useful current results, open:
 - `final/markers_uniform_reference_comparison.png`
 - `final/cnn_comparison_showcase.png`
 - `final/hsi_cnn_color_comparison.png`
+- `final/ocr_handwriting_comparison.png`
 - `analysis/showcase_metric_deltas.png`
 - `analysis/showcase_analysis_summary.md`
 - `analysis/page_pipeline_math_figure.png`
@@ -39,10 +40,13 @@ The `experimental/` branch is intentionally separate from the accepted
 `final/` showcase so new methods can be tested without changing the current
 report-facing narrative. `experimental/cnn/` holds per-model inference
 outputs and CSV metrics for Zero-DCE++ and RetinexNet; `experimental/hsi/`
-holds the color HSI pipeline outputs; `experimental/evaluation/` aggregates
-all of these next to the homomorphic and CLAHE baselines, and produces both
-the representative-set overview (`hard_case_visual_overview.png`) and the
-all-cases overview (`hard_case_all_overview.png`).
+holds the color HSI pipeline outputs; `experimental/ocr/` holds the
+handwriting OCR readability benchmark (TrOCR predictions, per-line CSV,
+corpus CER / WER table, line crops per method); `experimental/evaluation/`
+aggregates the synthetic and proxy metrics next to the homomorphic and
+CLAHE baselines, and produces both the representative-set overview
+(`hard_case_visual_overview.png`) and the all-cases overview
+(`hard_case_all_overview.png`).
 
 Note:
 `final/selected_real_images_hf_bright_overview.png` keeps an older filename for

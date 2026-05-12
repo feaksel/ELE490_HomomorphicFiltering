@@ -121,11 +121,14 @@
 ### R-001 Overclaiming Real-Image Success
 
 - Risk:
-  Real-image success is mostly qualitative. We do not have true ground truth
+  Real-image success was mostly qualitative. We did not have true ground truth
   for most scenes.
 - Mitigation:
   Phrase conclusions as visual improvement under uneven illumination, not as
-  guaranteed correction.
+  guaranteed correction. Additionally, the downstream handwriting OCR
+  benchmark on `writing.jpeg` (see `D-011`) now provides a quantitative real-
+  image readability number (corpus CER and WER vs manually-transcribed
+  ground truth) that supports the visual claims without overstating them.
 
 ### R-002 Overprocessing Fine Texture
 
@@ -144,6 +147,23 @@
 - Mitigation:
   Explicitly document that the page is a special readability-focused document
   case rather than a general real-scene texture case.
+
+### R-006 Single-Image OCR Benchmark Has Limited Statistical Power
+
+- Risk:
+  The handwriting OCR benchmark (`D-011`) is run on a single image
+  (`writing.jpeg`, 8 lines, single writer). Eight lines of one writer in
+  one lighting condition is informative but not statistically robust;
+  the ranking of methods could flip with a different writer or scan.
+- Mitigation:
+  Frame the result as evidence-of-concept on a real bad-scan sample
+  representative of "flashlight beam plus dark shadow plus yellow color
+  cast" — the corruption type this project targets — rather than as a
+  general benchmark claim. Note the ranking is consistent with what the
+  synthetic SSIM table shows and with the visual color comparison;
+  three independent kinds of evidence pointing in the same direction
+  is the strongest interpretation. Add more bad-scan samples in future
+  work for stronger n.
 
 ### R-005 Pretrained CNN Comparison Is Not a Like-For-Like Test
 

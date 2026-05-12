@@ -178,6 +178,25 @@
   stay natural and shadows flatten without the bluish color cast that
   RetinexNet introduces, while Zero-DCE++ stays close to the original
   brightness.
+- Added a quantitative downstream-task evaluation: handwriting OCR
+  readability with `microsoft/trocr-large-handwritten` on
+  `writing.jpeg` (real handwriting with severe flashlight beam + dark
+  edges + yellow color cast). Manifest with manually-transcribed
+  ground truth at `configs/handwriting_lines_manifest.json` (8 lines).
+- New scripts: `scripts/32_ocr_handwriting_pipeline.py` (loads TrOCR,
+  crops lines from each method's output, computes corpus CER and WER
+  via jiwer) and `scripts/33_ocr_comparison_figure.py` (builds the
+  report-facing comparison figure).
+- Headline OCR numbers (corpus-level over 8 lines):
+  - Original: CER `33.1 %`, WER `90.5 %`
+  - HF + Tone (Gray): CER `26.6 %`, WER `76.2 %`
+  - HSI HF + Tone: CER `25.2 %`, WER `76.2 %`
+  - Zero-DCE++: CER `30.2 %`, WER `81.0 %`
+  - RetinexNet: CER `28.8 %`, WER `85.7 %`
+- HSI HF + Tone gives the largest reduction (-7.9 absolute CER
+  points; ~24% relative). Both project pipelines outperform both
+  pretrained CNN baselines on this downstream task. Promoted figure
+  at `results/final/ocr_handwriting_comparison.png`.
 
 ## Current Active Result Files
 
@@ -193,3 +212,4 @@
 - `results/final/uniform_reference_comparison_overview.png`
 - `results/final/cnn_comparison_showcase.png`
 - `results/final/hsi_cnn_color_comparison.png`
+- `results/final/ocr_handwriting_comparison.png`

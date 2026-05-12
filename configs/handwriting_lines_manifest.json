@@ -1,0 +1,50 @@
+[
+  {
+    "id": "writing_l1",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [40, 240, 1080, 350],
+    "transcript": "7 key OS Services"
+  },
+  {
+    "id": "writing_l2",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [110, 370, 1080, 490],
+    "transcript": "program development"
+  },
+  {
+    "id": "writing_l3",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [130, 490, 750, 590],
+    "transcript": "program exec"
+  },
+  {
+    "id": "writing_l4",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [130, 595, 780, 685],
+    "transcript": "I/O access"
+  },
+  {
+    "id": "writing_l5",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [130, 690, 1050, 795],
+    "transcript": "controlled file access"
+  },
+  {
+    "id": "writing_l6",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [130, 795, 1080, 890],
+    "transcript": "system access control"
+  },
+  {
+    "id": "writing_l7",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [130, 885, 1180, 985],
+    "transcript": "error detection and response"
+  },
+  {
+    "id": "writing_l8",
+    "image": "images/writing.jpeg",
+    "bbox_abs": [120, 985, 700, 1080],
+    "transcript": "accounting"
+  }
+]
