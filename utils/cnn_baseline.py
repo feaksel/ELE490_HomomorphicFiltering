@@ -45,21 +45,38 @@ def describe_expected_model_locations():
     return "\n".join(lines)
 
 
+def _resolve_model_path(model_spec):
+    configured_path = os.environ.get(model_spec["env_var"])
+    candidate_paths = []
+    if configured_path:
+        candidate_paths.append(configured_path)
+    candidate_paths.extend(model_spec["candidate_paths"])
+
+    for candidate_path in candidate_paths:
+        if os.path.exists(candidate_path):
+            return candidate_path
+    return None
+
+
 def find_available_model_spec():
     for model_spec in MODEL_SPECS:
-        configured_path = os.environ.get(model_spec["env_var"])
-        candidate_paths = []
-        if configured_path:
-            candidate_paths.append(configured_path)
-        candidate_paths.extend(model_spec["candidate_paths"])
-
-        for candidate_path in candidate_paths:
-            if os.path.exists(candidate_path):
-                resolved = dict(model_spec)
-                resolved["path"] = candidate_path
-                return resolved
-
+        resolved_path = _resolve_model_path(model_spec)
+        if resolved_path is not None:
+            resolved = dict(model_spec)
+            resolved["path"] = resolved_path
+            return resolved
     return None
+
+
+def find_all_available_model_specs():
+    resolved_models = []
+    for model_spec in MODEL_SPECS:
+        resolved_path = _resolve_model_path(model_spec)
+        if resolved_path is not None:
+            resolved = dict(model_spec)
+            resolved["path"] = resolved_path
+            resolved_models.append(resolved)
+    return resolved_models
 
 
 def _extract_tensor(output):

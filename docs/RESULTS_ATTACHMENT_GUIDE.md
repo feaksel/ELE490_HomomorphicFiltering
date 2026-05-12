@@ -53,11 +53,40 @@ These are the best files to attach in the main report or presentation:
   Best figure for the practical document-readability story.
 - `results/final/page_detail_comparison.png`
   Best close-up figure for showing why the page example matters.
+- `results/final/cnn_comparison_showcase.png`
+  Three-row x four-column grayscale figure (`page`, `seat`, `markers` across
+  Original, HF + Tone, Zero-DCE++, and RetinexNet). Supports the claim that
+  the classical homomorphic baseline remains competitive against pretrained
+  learned alternatives on the non-uniform illumination problem this project
+  targets.
+- `results/final/hsi_cnn_color_comparison.png`
+  Color analog of the above. Same three cases across Original, the HSI
+  homomorphic + tone pipeline, Zero-DCE++ (color), and RetinexNet (color).
+  Strongest figure for showing that the project's classical pipeline
+  preserves natural hue and saturation while still correcting illumination.
 
 ### Good Appendix Attachments
 
 These are useful in an appendix or backup section:
 
+- `results/experimental/evaluation/synthetic_method_table.md`
+  Synthetic-case PSNR / SSIM / runtime table comparing the homomorphic
+  baseline, the best local CLAHE variant, and the two pretrained CNN
+  baselines. Good support material when discussing the CNN comparison.
+- `results/experimental/evaluation/hard_case_method_table.md`
+  Hard-case proxy-metric table (entropy, P99-P1 spread, high-frequency share,
+  mean gradient, clipped pixel ratio, runtime). Backs up the runtime claim
+  for Zero-DCE++.
+- `results/experimental/evaluation/hard_case_visual_overview.png`
+  Representative-set method grid (`tun`, `page`, `seat`, `markers`).
+- `results/experimental/evaluation/hard_case_all_overview.png`
+  All-case method grid covering every entry in the hard-case manifest. More
+  exhaustive than the representative `hard_case_visual_overview.png`; good
+  for an appendix attachment.
+- `results/experimental/evaluation/hsi_cnn_all_color_overview.png`
+  All-case color comparison (HSI HF + Tone vs Zero-DCE++ vs RetinexNet)
+  across every hard case. Backs up the three-case
+  `hsi_cnn_color_comparison.png` figure in `results/final/`.
 - `results/metrics/blind_multicase_metrics.png`
   Compact synthetic-case metric summary.
 - `results/metrics/metrics_summary.png`

@@ -87,6 +87,41 @@
   A smaller set is easier to explain and avoids mixing accepted results with
   rejected post-processing branches.
 
+### D-010 HSI Color Pipeline Reuses The Accepted Grayscale Settings
+
+- Status: accepted
+- Decision:
+  When the homomorphic + brightness lift + tone equalization pipeline is run
+  on a color image, convert RGB to HSI, process only the intensity channel
+  with `utils.showcase_pipeline.apply_regular_showcase_pipeline`, and
+  recombine. Use the same per-scene config rules: standard global settings
+  by default, the conservative override for `page`.
+- Why:
+  Treating illumination as an intensity-channel phenomenon and leaving hue /
+  saturation untouched keeps colors natural and avoids the color shifts the
+  pretrained CNN baselines introduce (especially RetinexNet, which casts the
+  output bluish-warm depending on case). Reusing the validated grayscale
+  configuration means no new parameters need separate validation.
+
+### D-009 Pretrained CNN Comparison Is Phase-2 Evidence, Not A Replacement Baseline
+
+- Status: accepted
+- Decision:
+  Include pretrained Zero-DCE++ and RetinexNet as comparison baselines in the
+  Phase-2 evaluation (`results/experimental/cnn/` and the
+  `results/experimental/evaluation/` tables) and in the report-facing figure
+  `results/final/cnn_comparison_showcase.png`. Do not promote either CNN over
+  the homomorphic baseline in the project's main pipeline.
+- Why:
+  Homomorphic filtering remains the synthetic-quality leader (SSIM `0.9380`
+  versus `0.8665` for Zero-DCE++ and `0.7624` for RetinexNet on the four
+  controlled corruption patterns). Zero-DCE++ wins on CPU runtime but trades
+  away detail recovery. RetinexNet is both slower and lower quality than the
+  classical baseline on this evaluation, since the pretrained checkpoint was
+  trained on LOL-style low-light pairs rather than non-uniform illumination.
+  Presenting these models as comparison baselines strengthens the report
+  without overstating their performance.
+
 ## Rejected Decisions
 
 ### R-001 Histogram Equalization as Part of the Current Showcase
@@ -148,15 +183,33 @@
   They clutter the report path, confuse the professor-facing narrative, and are
   better kept under `scripts/old/` and `results/old/` as archived decisions.
 
+### R-007 Promote Phase-2 CLAHE Branch (Selected and Boosted) Into The Visual Story
+
+- Status: rejected / failed
+- Rejected idea:
+  Show the Phase-2 winner `CLAHE 16x16 clip=0.01` and its high-boost variant
+  in the report-facing visual overviews next to the homomorphic baseline.
+- Why rejected:
+  These CLAHE branches do not improve the image in the direction this project
+  cares about. They emphasize local texture, noise, and fabric / paper grain
+  rather than restoring uniform illumination — the same failure mode that
+  rejected earlier page-specific CLAHE branches (`R-003`, `R-004`). The
+  Phase-2 sweep selected them only on lightweight proxy metrics
+  (entropy, runtime); homomorphic filtering remains stronger on the
+  illumination-correction goal and is the synthetic SSIM leader by a wide
+  margin. CLAHE rows are kept in the quantitative tables for honest
+  reporting but omitted from `hard_case_visual_overview.png` and
+  `hard_case_crop_overview.png`.
+
 ## Pending Decisions
 
 ### P-001 Final Reporting Direction
 
-- Status: pending
-- Decision to make:
-  Whether to spend the remaining effort on:
-  - validated color-pipeline extension
-  - stronger real-image quantitative analysis
+- Status: partially resolved (CNN comparison branch closed under `D-009`,
+  HSI color pipeline validated under `D-010`)
+- Remaining options:
+  - stronger real-image quantitative analysis (e.g., OCR / readability on the
+    page case)
   - broader real-life application examples
 
 ### P-002 Final Presentation Scope After Mid-Project Update

@@ -1,0 +1,66 @@
+[
+  {
+    "case_id": "tun",
+    "title": "Standard HF + Tone Equalization",
+    "gamma_l": 0.06,
+    "gamma_h": 1.0,
+    "d0": 320,
+    "brighten_gamma": 0.72
+  },
+  {
+    "case_id": "page",
+    "title": "Conservative HF + Tone Equalization",
+    "gamma_l": 0.25,
+    "gamma_h": 1.0,
+    "d0": 160,
+    "brighten_gamma": 0.84
+  },
+  {
+    "case_id": "seat",
+    "title": "Standard HF + Tone Equalization",
+    "gamma_l": 0.06,
+    "gamma_h": 1.0,
+    "d0": 320,
+    "brighten_gamma": 0.72
+  },
+  {
+    "case_id": "pillar",
+    "title": "Standard HF + Tone Equalization",
+    "gamma_l": 0.06,
+    "gamma_h": 1.0,
+    "d0": 320,
+    "brighten_gamma": 0.72
+  },
+  {
+    "case_id": "markers",
+    "title": "Standard HF + Tone Equalization",
+    "gamma_l": 0.06,
+    "gamma_h": 1.0,
+    "d0": 320,
+    "brighten_gamma": 0.72
+  },
+  {
+    "case_id": "cardboard",
+    "title": "Standard HF + Tone Equalization",
+    "gamma_l": 0.06,
+    "gamma_h": 1.0,
+    "d0": 320,
+    "brighten_gamma": 0.72
+  },
+  {
+    "case_id": "carpet",
+    "title": "Standard HF + Tone Equalization",
+    "gamma_l": 0.06,
+    "gamma_h": 1.0,
+    "d0": 320,
+    "brighten_gamma": 0.72
+  },
+  {
+    "case_id": "writing",
+    "title": "Standard HF + Tone Equalization",
+    "gamma_l": 0.06,
+    "gamma_h": 1.0,
+    "d0": 320,
+    "brighten_gamma": 0.72
+  }
+]

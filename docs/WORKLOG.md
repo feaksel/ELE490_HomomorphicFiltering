@@ -111,6 +111,74 @@
 - Added `results/final/page_detail_comparison.png` as a dedicated zoomed page
   comparison alongside the full-frame page figures.
 
+## 2026-05-11
+
+- Closed out the Phase-2 CNN comparison branch (`scripts/26`, `scripts/27`).
+- Vendored Zero-DCE++ (`enhance_net_nopool`) and a PyTorch port of RetinexNet
+  (`DecomNet`, `RelightNet`) under `utils/external/`, with attribution headers
+  pointing at the upstream repositories.
+- Acquired pretrained weights:
+  - `models/zerodcepp/Epoch99.pth` from Li-Chongyi/Zero-DCE_extension
+  - `models/retinexnet/Decom_9200.tar` and `Relight_9200.tar` from
+    aasharma90/RetinexNet_PyTorch
+- Added `scripts/28_prepare_cnn_models.py` that wraps each model so its
+  `forward(rgb_01)` returns only the final enhanced RGB in `[0, 1]`, then
+  exports a TorchScript `.ts` file the existing CNN scaffolding can load.
+  The Zero-DCE++ wrapper reflect-pads inputs to multiples of `scale_factor=12`
+  so it accepts arbitrary spatial sizes.
+- Refactored `utils/cnn_baseline.py` with `find_all_available_model_specs` so
+  multiple models can be discovered in a single run.
+- Refactored `scripts/26_pretrained_cnn_hard_cases.py` to iterate over every
+  discovered model, write per-model CSVs (`cnn_*_metrics_{model_id}.csv`),
+  and emit a combined `cnn_models.json` manifest.
+- Refactored `scripts/27_next_phase_evaluation.py` to consume the per-model
+  CSVs, include each CNN as its own method row, add a column per CNN to the
+  visual overview grids, and list each CNN in the summary file.
+- Re-ran the pipeline. Headline numbers (synthetic average, four corruption
+  patterns):
+  - Homomorphic baseline: SSIM `0.9380`, PSNR `17.889` dB
+  - CLAHE 16x16: SSIM `0.8655`, PSNR `16.150` dB
+  - Zero-DCE++: SSIM `0.8665`, PSNR `15.546` dB, average runtime `13.78 ms`
+  - RetinexNet: SSIM `0.7624`, PSNR `12.181` dB, average runtime `317.98 ms`
+- Homomorphic filtering remains the synthetic-quality leader. Zero-DCE++ is
+  the runtime leader and the tradeoff-rank winner; RetinexNet is both slower
+  and lower quality than HF on this comparison.
+- Added `scripts/29_cnn_comparison_figure.py` and promoted one new figure to
+  `results/final/cnn_comparison_showcase.png` (page, seat, markers across
+  Original / HF + Tone / Zero-DCE++ / RetinexNet) — this is the
+  report-facing artifact for the CNN comparison.
+- Marked the Phase-2 CLAHE branches (`CLAHE 16x16 clip=0.01` and its
+  high-boost variant) as failed for the illumination-correction goal and
+  removed them from `hard_case_visual_overview.png` and
+  `hard_case_crop_overview.png` (`R-007`). They remain in the
+  `synthetic_method_table` and `hard_case_method_table` CSVs / Markdown
+  for honest quantitative reporting, but they are no longer in the
+  professor-facing visual story.
+
+## 2026-05-12
+
+- Extended script 27 to also write `hard_case_all_overview.png` and
+  `hard_case_all_crop_overview.png` covering every entry in the
+  hard-case manifest. The previously-existing 4-case overview is kept
+  for the report body; the 8-case version supports the appendix.
+- Validated the HSI color pipeline. Extracted the HSI conversion into
+  `utils/hsi_pipeline.py` so the project's accepted homomorphic +
+  brightness lift + tone equalization pipeline can run on the intensity
+  channel while hue and saturation are preserved. Closes `I-001`.
+- Added `scripts/30_hsi_color_pipeline.py` which runs the HSI pipeline
+  on every hard-case image and writes color outputs and proxy metrics
+  to `results/experimental/hsi/`.
+- Added `scripts/31_hsi_cnn_color_comparison.py` which builds two
+  color comparison figures: a 3-case representative figure promoted to
+  `results/final/hsi_cnn_color_comparison.png`, and an 8-case appendix
+  figure under `results/experimental/evaluation/hsi_cnn_all_color_overview.png`.
+- New active decision `D-010`: HSI color pipeline reuses the accepted
+  grayscale settings (per-scene config + intensity-only processing).
+- Visually, HSI clearly leads the color comparison: hue and saturation
+  stay natural and shadows flatten without the bluish color cast that
+  RetinexNet introduces, while Zero-DCE++ stays close to the original
+  brightness.
+
 ## Current Active Result Files
 
 - `results/final/color_grayscale_standard_overview.png`
@@ -123,3 +191,5 @@
 - `results/final/cardboard_uniform_reference_comparison.png`
 - `results/final/markers_uniform_reference_comparison.png`
 - `results/final/uniform_reference_comparison_overview.png`
+- `results/final/cnn_comparison_showcase.png`
+- `results/final/hsi_cnn_color_comparison.png`

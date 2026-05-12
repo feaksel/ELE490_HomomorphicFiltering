@@ -1,7 +1,8 @@
 """
 Script 26: Optional pretrained CNN comparison on the hard-case set.
-This script expects local TorchScript weights for Zero-DCE++ or RetinexNet,
-runs RGB inference, and saves both RGB and grayscale outputs plus metrics.
+This script discovers every locally-available TorchScript model (Zero-DCE++
+and/or RetinexNet), runs RGB inference on the hard-case manifest and the
+synthetic illumination cases, and saves per-model outputs plus metrics.
 """
 import csv
 import json
@@ -15,7 +16,7 @@ from PIL import Image
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.cnn_baseline import (
     describe_expected_model_locations,
-    find_available_model_spec,
+    find_all_available_model_specs,
     load_torchscript_model,
     run_torchscript_model,
 )
@@ -55,26 +56,7 @@ def write_csv(output_path, fieldnames, rows):
         writer.writerows(rows)
 
 
-if __name__ == "__main__":
-    ensure_directory(RESULTS_ROOT)
-    ensure_directory(os.path.join(RESULTS_ROOT, "hard_cases"))
-    ensure_directory(os.path.join(RESULTS_ROOT, "synthetic"))
-
-    print("Running optional pretrained CNN comparison...")
-    model_spec = find_available_model_spec()
-    status_path = os.path.join(RESULTS_ROOT, "cnn_status.md")
-
-    if model_spec is None:
-        with open(status_path, "w", encoding="utf-8") as output_file:
-            output_file.write(
-                "# CNN Status\n\n"
-                "No pretrained TorchScript model was found locally, so the CNN comparison branch was skipped.\n\n"
-                + describe_expected_model_locations()
-                + "\n"
-            )
-        print("No local CNN weights found. Wrote status note and skipped inference.")
-        sys.exit(0)
-
+def run_for_model(model_spec, manifest, synthetic_reference):
     model = load_torchscript_model(model_spec["path"], device="cpu")
     print(f"Loaded {model_spec['display_name']} from {model_spec['path']}")
 
@@ -86,7 +68,6 @@ if __name__ == "__main__":
     for directory in [model_root, hard_rgb_dir, hard_gray_dir, synthetic_rgb_dir, synthetic_gray_dir]:
         ensure_directory(directory)
 
-    manifest = load_hard_case_manifest()
     hard_case_rows = []
     for case in manifest:
         image_path = resolve_existing_path(case["path"])
@@ -107,15 +88,8 @@ if __name__ == "__main__":
                 **proxy_metrics,
             }
         )
-        print(f"  Saved CNN hard-case output for {case['id']}")
+        print(f"  hard-case {case['id']}: {runtime_ms:.1f} ms")
 
-    synthetic_reference_path = resolve_existing_path(
-        "images/cameraman.tif",
-        "images/cameraman.png",
-        "images/old/cameraman.tif",
-        "images/old/cameraman.png",
-    )
-    synthetic_reference = np.array(Image.open(synthetic_reference_path).convert("L"), dtype=np.uint8)
     synthetic_rows = []
     for case_id, candidate_paths in SYNTHETIC_CASES:
         corrupted_path = resolve_existing_path(*candidate_paths)
@@ -138,10 +112,10 @@ if __name__ == "__main__":
                 **reference_metrics,
             }
         )
-        print(f"  Saved CNN synthetic output for {case_id}")
+        print(f"  synthetic {case_id}: {runtime_ms:.1f} ms")
 
     write_csv(
-        os.path.join(RESULTS_ROOT, "cnn_hard_case_metrics.csv"),
+        os.path.join(RESULTS_ROOT, f"cnn_hard_case_metrics_{model_spec['id']}.csv"),
         [
             "case_id",
             "model_id",
@@ -158,24 +132,59 @@ if __name__ == "__main__":
         hard_case_rows,
     )
     write_csv(
-        os.path.join(RESULTS_ROOT, "cnn_synthetic_metrics.csv"),
+        os.path.join(RESULTS_ROOT, f"cnn_synthetic_metrics_{model_spec['id']}.csv"),
         ["case_id", "model_id", "display_name", "runtime_ms", "mse", "psnr", "ssim"],
         synthetic_rows,
     )
 
-    with open(os.path.join(RESULTS_ROOT, "cnn_model.json"), "w", encoding="utf-8") as output_file:
-        json.dump(model_spec, output_file, indent=2)
+    return len(hard_case_rows), len(synthetic_rows)
 
-    with open(status_path, "w", encoding="utf-8") as output_file:
-        output_file.write(
-            "# CNN Status\n\n"
-            f"- Model: `{model_spec['display_name']}`\n"
-            f"- Path: `{model_spec['path']}`\n"
-            "- Inference device: `cpu`\n"
-            f"- Hard cases processed: `{len(hard_case_rows)}`\n"
-            f"- Synthetic cases processed: `{len(synthetic_rows)}`\n"
+
+if __name__ == "__main__":
+    ensure_directory(RESULTS_ROOT)
+    ensure_directory(os.path.join(RESULTS_ROOT, "hard_cases"))
+    ensure_directory(os.path.join(RESULTS_ROOT, "synthetic"))
+
+    print("Running pretrained CNN comparison...")
+    model_specs = find_all_available_model_specs()
+    status_path = os.path.join(RESULTS_ROOT, "cnn_status.md")
+    models_summary_path = os.path.join(RESULTS_ROOT, "cnn_models.json")
+
+    if not model_specs:
+        with open(status_path, "w", encoding="utf-8") as output_file:
+            output_file.write(
+                "# CNN Status\n\n"
+                "No pretrained TorchScript model was found locally, so the CNN comparison branch was skipped.\n\n"
+                + describe_expected_model_locations()
+                + "\n"
+            )
+        print("No local CNN weights found. Wrote status note and skipped inference.")
+        sys.exit(0)
+
+    manifest = load_hard_case_manifest()
+    synthetic_reference_path = resolve_existing_path(
+        "images/cameraman.tif",
+        "images/cameraman.png",
+        "images/old/cameraman.tif",
+        "images/old/cameraman.png",
+    )
+    synthetic_reference = np.array(Image.open(synthetic_reference_path).convert("L"), dtype=np.uint8)
+
+    status_lines = ["# CNN Status", ""]
+    for model_spec in model_specs:
+        print(f"\n=== Running model {model_spec['display_name']} ===")
+        hard_count, synth_count = run_for_model(model_spec, manifest, synthetic_reference)
+        status_lines.append(
+            f"- `{model_spec['display_name']}` (id `{model_spec['id']}`) — path `{model_spec['path']}`, "
+            f"hard cases: {hard_count}, synthetic cases: {synth_count}"
         )
 
-    print(f"Saved CNN hard-case metrics to {os.path.join(RESULTS_ROOT, 'cnn_hard_case_metrics.csv')}")
-    print(f"Saved CNN synthetic metrics to {os.path.join(RESULTS_ROOT, 'cnn_synthetic_metrics.csv')}")
+    with open(models_summary_path, "w", encoding="utf-8") as output_file:
+        json.dump(model_specs, output_file, indent=2)
+
+    with open(status_path, "w", encoding="utf-8") as output_file:
+        output_file.write("\n".join(status_lines) + "\n")
+
+    print(f"\nSaved CNN models summary to {models_summary_path}")
+    print(f"Saved CNN status note to {status_path}")
     print("Done! CNN comparison branch is ready.")

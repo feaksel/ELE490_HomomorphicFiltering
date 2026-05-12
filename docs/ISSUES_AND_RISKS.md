@@ -4,14 +4,22 @@
 
 ### I-001 HSI Color Pipeline Not Yet Validated
 
-- Status: open
+- Status: closed
 - Scope:
-  `scripts/05_color_hsi.py`
+  `scripts/05_color_hsi.py`, `scripts/30_hsi_color_pipeline.py`,
+  `utils/hsi_pipeline.py`
 - Problem:
-  The HSI extension exists structurally, but it is not yet part of the active
-  validated showcase.
-- Risk:
-  If presented too strongly, it would overstate project maturity.
+  The HSI extension existed structurally but only ran on a hardcoded
+  placeholder image (`images/photo_1.jpg`) that was never provided.
+- Resolution:
+  Extracted the HSI conversion code into `utils/hsi_pipeline.py` so it can
+  reuse the project's accepted homomorphic + brightness lift + tone
+  equalization pipeline on the intensity channel. Added
+  `scripts/30_hsi_color_pipeline.py` which runs the pipeline on every
+  hard-case image and writes color outputs to `results/experimental/hsi/`.
+  HSI now sits next to the CNN baselines in the color comparison
+  (`results/final/hsi_cnn_color_comparison.png` and
+  `results/experimental/evaluation/hsi_cnn_all_color_overview.png`).
 
 ### I-002 Some Documentation Still Reflects Older Workflow
 
@@ -80,6 +88,22 @@
 - Resolution:
   Removed the page-specific HEQ script and deleted its generated result traces.
 
+### C-005 Phase-2 CNN Comparison Branch Was Unrun
+
+- Status: closed
+- Problem:
+  `scripts/26_pretrained_cnn_hard_cases.py` could not produce any output
+  because no pretrained TorchScript weights existed locally, so the Phase-2
+  CNN comparison stayed empty in `results/experimental/cnn/`.
+- Resolution:
+  Vendored the Zero-DCE++ and RetinexNet (PyTorch port) network classes under
+  `utils/external/`, downloaded the official pretrained weights into
+  `models/zerodcepp/` and `models/retinexnet/`, and added
+  `scripts/28_prepare_cnn_models.py` to export TorchScript wrappers. Scripts
+  26 and 27 now handle multiple CNN models per run. One report-facing figure
+  was promoted to `results/final/cnn_comparison_showcase.png` and tables
+  updated in `results/experimental/evaluation/`.
+
 ### C-004 Rejected CLAHE / Tone Branches Were Mixed Into Active Final Results
 
 - Status: closed
@@ -120,6 +144,19 @@
 - Mitigation:
   Explicitly document that the page is a special readability-focused document
   case rather than a general real-scene texture case.
+
+### R-005 Pretrained CNN Comparison Is Not a Like-For-Like Test
+
+- Risk:
+  Zero-DCE++ and the RetinexNet PyTorch port were trained on low-light /
+  paired enhancement data (LOL-style), not on the non-uniform illumination
+  problem this project targets. They may underperform homomorphic filtering
+  on our hard cases for reasons unrelated to architectural capacity.
+- Mitigation:
+  Present the CNN comparison as evidence that a careful classical baseline
+  remains competitive against published learned models on this specific
+  problem, rather than as proof of universal superiority. Cite the training
+  distribution mismatch explicitly when discussing RetinexNet's results.
 
 ### R-004 Too Many Side Experiments Can Blur the Story
 

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "zerodcepp",
+    "display_name": "Zero-DCE++",
+    "env_var": "ZERO_DCEPP_MODEL_PATH",
+    "candidate_paths": [
+      "models\\zerodcepp\\zerodcepp.ts",
+      "models\\zerodcepp\\model.ts",
+      "models\\zerodcepp\\zerodcepp.pt",
+      "models\\zerodcepp\\model.pt"
+    ],
+    "path": "models\\zerodcepp\\zerodcepp.ts"
+  },
+  {
+    "id": "retinexnet",
+    "display_name": "RetinexNet",
+    "env_var": "RETINEXNET_MODEL_PATH",
+    "candidate_paths": [
+      "models\\retinexnet\\retinexnet.ts",
+      "models\\retinexnet\\model.ts",
+      "models\\retinexnet\\retinexnet.pt",
+      "models\\retinexnet\\model.pt"
+    ],
+    "path": "models\\retinexnet\\retinexnet.ts"
+  }
+]

@@ -29,7 +29,8 @@ conservative setting before the same tone-equalization step.
 - The grayscale pipeline is implemented end to end.
 - Synthetic experiments, metrics, parameter sweeps, and histogram-equalization comparisons are implemented.
 - Real-scene grayscale demos are implemented for tunnel, flashlight, and multiple RGB photos converted to grayscale.
-- The HSI color pipeline is structurally ready, but it still needs final validation on a real color-photo set.
+- The Phase-2 comparison branch is complete: local-equalization (CLAHE/AHE) and two pretrained CNN baselines (Zero-DCE++ and a PyTorch port of RetinexNet) have been run against the homomorphic baseline. The homomorphic pipeline remains the synthetic-quality leader; see `results/experimental/evaluation/` and `results/final/cnn_comparison_showcase.png`.
+- The HSI color pipeline is validated. The accepted homomorphic + tone-equalization pipeline now runs end to end on color hard-case images through `utils/hsi_pipeline.py` and `scripts/30_hsi_color_pipeline.py`. Color comparison against the two CNN baselines is at `results/final/hsi_cnn_color_comparison.png` (representative set) and `results/experimental/evaluation/hsi_cnn_all_color_overview.png` (full set).
 
 ## Setup
 
@@ -96,7 +97,16 @@ py -3.9 scripts/24_seat_pipeline_math.py
 py -3.9 scripts/25_local_equalization_hard_cases.py
 py -3.9 scripts/26_pretrained_cnn_hard_cases.py
 py -3.9 scripts/27_next_phase_evaluation.py
+py -3.9 scripts/28_prepare_cnn_models.py
+py -3.9 scripts/29_cnn_comparison_figure.py
+py -3.9 scripts/30_hsi_color_pipeline.py
+py -3.9 scripts/31_hsi_cnn_color_comparison.py
 ```
+
+Script `28_prepare_cnn_models.py` reads raw `.pth` / `.tar` weights from
+`models/zerodcepp/` and `models/retinexnet/` and writes TorchScript files
+that script `26` can load. Run it before script `26` if the CNN branch is
+new on this machine.
 
 ## Recommended Outputs
 
@@ -110,6 +120,8 @@ If you want the strongest current mid-project figures first, open these:
 - `results/final/uniform_reference_comparison_overview.png`
 - `results/final/cardboard_uniform_reference_comparison.png`
 - `results/final/markers_uniform_reference_comparison.png`
+- `results/final/cnn_comparison_showcase.png`
+- `results/final/hsi_cnn_color_comparison.png`
 - `results/analysis/showcase_metric_deltas.png`
 - `results/analysis/showcase_analysis_summary.md`
 - `results/analysis/page_pipeline_math_figure.png`
@@ -136,9 +148,26 @@ uses:
 pip install -r requirements-cnn.txt
 ```
 
-Script `26_pretrained_cnn_hard_cases.py` looks first for a local
-`Zero-DCE++` TorchScript model, then for a local `RetinexNet` TorchScript
-model. If neither exists, it writes a status note and skips inference.
+Script `26_pretrained_cnn_hard_cases.py` discovers every available
+TorchScript model under `models/zerodcepp/` and `models/retinexnet/` (or
+via the `ZERO_DCEPP_MODEL_PATH` / `RETINEXNET_MODEL_PATH` environment
+variables) and runs each one. If no weights are present, it writes a
+status note and skips inference. Use `scripts/28_prepare_cnn_models.py`
+to convert raw `.pth` / `.tar` weights into the TorchScript wrappers the
+inference script expects.
+
+Expected raw weights:
+
+- `models/zerodcepp/Epoch99.pth` from
+  https://github.com/Li-Chongyi/Zero-DCE_extension
+  (path: `Zero-DCE++/snapshots_Zero_DCE++/Epoch99.pth`)
+- `models/retinexnet/Decom_9200.tar` and
+  `models/retinexnet/Relight_9200.tar` from
+  https://github.com/aasharma90/RetinexNet_PyTorch
+  (paths: `ckpts/Decom/9200.tar` and `ckpts/Relight/9200.tar`)
+
+After downloading, run `py -3 scripts/28_prepare_cnn_models.py` once to
+produce `models/zerodcepp/zerodcepp.ts` and `models/retinexnet/retinexnet.ts`.
 
 See `results/README.md` for a short guide.
 

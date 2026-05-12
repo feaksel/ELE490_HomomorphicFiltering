@@ -130,23 +130,13 @@ if __name__ == "__main__":
     synthetic_rows = read_csv_rows(synthetic_metrics_path)
     hard_rows = read_csv_rows(hard_metrics_path)
 
-    cnn_available = False
-    cnn_model_id = None
-    cnn_model_name = None
-    cnn_synthetic_rows = []
-    cnn_hard_rows = []
-    cnn_model_path = os.path.join(CNN_ROOT, "cnn_model.json")
-    cnn_synthetic_path = os.path.join(CNN_ROOT, "cnn_synthetic_metrics.csv")
-    cnn_hard_path = os.path.join(CNN_ROOT, "cnn_hard_case_metrics.csv")
-    if os.path.exists(cnn_model_path) and os.path.exists(cnn_synthetic_path) and os.path.exists(cnn_hard_path):
-        with open(cnn_model_path, "r", encoding="utf-8") as input_file:
-            cnn_model = json.load(input_file)
-        cnn_model_id = cnn_model["id"]
-        cnn_model_name = cnn_model["display_name"]
-        cnn_synthetic_rows = read_csv_rows(cnn_synthetic_path)
-        cnn_hard_rows = read_csv_rows(cnn_hard_path)
-        cnn_available = True
+    cnn_models = []
+    cnn_models_path = os.path.join(CNN_ROOT, "cnn_models.json")
+    if os.path.exists(cnn_models_path):
+        with open(cnn_models_path, "r", encoding="utf-8") as input_file:
+            cnn_models = json.load(input_file)
 
+    cnn_available = len(cnn_models) > 0
     selected_synthetic_ids = [
         "homomorphic_synthetic_baseline",
         best_method_record["selected_method_id"],
@@ -157,19 +147,25 @@ if __name__ == "__main__":
         best_method_record["selected_method_id"],
         best_method_record["boosted_method_id"],
     ]
-    if cnn_available:
-        selected_synthetic_ids.append(cnn_model_id)
-        selected_hard_ids.append(cnn_model_id)
+    for cnn_model in cnn_models:
+        model_id = cnn_model["id"]
+        cnn_synthetic_path = os.path.join(CNN_ROOT, f"cnn_synthetic_metrics_{model_id}.csv")
+        cnn_hard_path = os.path.join(CNN_ROOT, f"cnn_hard_case_metrics_{model_id}.csv")
+        if not (os.path.exists(cnn_synthetic_path) and os.path.exists(cnn_hard_path)):
+            print(f"Skipping CNN model {model_id}: per-model CSVs missing")
+            continue
+
+        cnn_synthetic_rows = read_csv_rows(cnn_synthetic_path)
+        cnn_hard_rows = read_csv_rows(cnn_hard_path)
+        for row in cnn_synthetic_rows:
+            row["method_id"] = row.get("method_id", row["model_id"])
+        for row in cnn_hard_rows:
+            row["method_id"] = row.get("method_id", row["model_id"])
+
         synthetic_rows.extend(cnn_synthetic_rows)
         hard_rows.extend(cnn_hard_rows)
-
-    if cnn_available:
-        for row in cnn_synthetic_rows:
-            row["method_id"] = row["model_id"]
-            row["display_name"] = row["display_name"]
-        for row in cnn_hard_rows:
-            row["method_id"] = row["model_id"]
-            row["display_name"] = row["display_name"]
+        selected_synthetic_ids.append(model_id)
+        selected_hard_ids.append(model_id)
 
     synthetic_rows = [dict(row, method_id=row.get("method_id", row.get("model_id"))) for row in synthetic_rows]
     hard_rows = [dict(row, method_id=row.get("method_id", row.get("model_id"))) for row in hard_rows]
@@ -215,11 +211,19 @@ if __name__ == "__main__":
         ),
     }
 
-    if cnn_available:
-        cnn_model_instance = load_torchscript_model(cnn_model["path"], device="cpu")
-        runtime_functions[cnn_model_id] = lambda case: rgb_to_grayscale_uint8(
-            run_torchscript_model(cnn_model_instance, case["rgb"], device="cpu")
+    cnn_model_instances = {}
+    for cnn_model in cnn_models:
+        if cnn_model["id"] not in selected_hard_ids:
+            continue
+        cnn_model_instances[cnn_model["id"]] = load_torchscript_model(cnn_model["path"], device="cpu")
+
+    def _make_cnn_runtime(model_instance):
+        return lambda case: rgb_to_grayscale_uint8(
+            run_torchscript_model(model_instance, case["rgb"], device="cpu")
         )
+
+    for model_id, model_instance in cnn_model_instances.items():
+        runtime_functions[model_id] = _make_cnn_runtime(model_instance)
 
     for method_id, runtime_function in runtime_functions.items():
         per_case_runtimes = [benchmark_runtime(lambda case=case: runtime_function(case), repeats=3) for case in runtime_cases]
@@ -367,14 +371,21 @@ if __name__ == "__main__":
     if not representative_ids:
         representative_ids = [case["id"] for case in manifest[:4]]
 
+    # CLAHE / boosted CLAHE branches are kept in the metric tables for honest
+    # quantitative comparison, but they were rejected for the visual story
+    # because they emphasize texture and noise rather than recovering the kind
+    # of detail this project targets (D-010). They are omitted from the
+    # report-facing visual overviews.
     method_visuals = [
         ("Original", None),
         ("HF + Tone", os.path.join(LOCAL_ROOT, "hard_cases", "hf_tone_baseline")),
-        (best_method_record["selected_display_name"], os.path.join(LOCAL_ROOT, "hard_cases", best_method_record["selected_method_id"])),
-        (best_method_record["boosted_display_name"], os.path.join(LOCAL_ROOT, "hard_cases", best_method_record["boosted_method_id"])),
     ]
-    if cnn_available:
-        method_visuals.append((cnn_model_name, os.path.join(CNN_ROOT, cnn_model_id, "hard_cases_gray")))
+    for cnn_model in cnn_models:
+        if cnn_model["id"] not in selected_hard_ids:
+            continue
+        method_visuals.append(
+            (cnn_model["display_name"], os.path.join(CNN_ROOT, cnn_model["id"], "hard_cases_gray"))
+        )
 
     full_rows = []
     crop_rows = []
@@ -396,6 +407,29 @@ if __name__ == "__main__":
     save_comparison_grid(full_rows, os.path.join(RESULTS_ROOT, "hard_case_visual_overview.png"))
     save_comparison_grid(crop_rows, os.path.join(RESULTS_ROOT, "hard_case_crop_overview.png"))
 
+    # Wider overview covering every case in the manifest, not just the
+    # representative subset. Useful for the report appendix to show the
+    # method behaviour is consistent across all hard cases.
+    all_full_rows = []
+    all_crop_rows = []
+    for case_record in manifest:
+        case_id = case_record["id"]
+        original_image = load_resized_grayscale(resolve_existing_path(case_record["path"]))
+        crop_box = resolve_crop_box(original_image.shape, case_record.get("crop_rel"))
+
+        full_row = [(original_image, f"{case_id}: Original")]
+        crop_row = [(crop_image(original_image, crop_box), f"{case_id}: Crop")]
+        for title, directory in method_visuals[1:]:
+            method_image = load_uint8(os.path.join(directory, f"{case_id}.png"))
+            full_row.append((method_image, f"{case_id}: {title}"))
+            crop_row.append((crop_image(method_image, crop_box), f"{case_id}: {title}"))
+
+        all_full_rows.append(full_row)
+        all_crop_rows.append(crop_row)
+
+    save_comparison_grid(all_full_rows, os.path.join(RESULTS_ROOT, "hard_case_all_overview.png"))
+    save_comparison_grid(all_crop_rows, os.path.join(RESULTS_ROOT, "hard_case_all_crop_overview.png"))
+
     fastest_method_id = min(hard_aggregates, key=lambda method_id: hard_aggregates[method_id]["runtime_ms"])
     best_synthetic_method_id = max(synthetic_aggregates, key=lambda method_id: synthetic_aggregates[method_id]["ssim"])
 
@@ -409,11 +443,12 @@ if __name__ == "__main__":
             f"`{tradeoff_rows[tradeoff_winner_id]['display_name']}` "
             "(ranked by synthetic SSIM, aggregate hard-case proxy quality, and CPU runtime)"
         ),
-        f"- Selected best local method from script 25: `{best_method_record['selected_display_name']}`",
-        f"- Selected boosted local branch: `{best_method_record['boosted_display_name']}`",
+        f"- Selected best local method from script 25: `{best_method_record['selected_display_name']}` (rejected for the visual story, see `D-009`/`R-007`: emphasizes texture / noise rather than recovering uniform illumination)",
+        f"- Selected boosted local branch: `{best_method_record['boosted_display_name']}` (same rejection rationale; kept only in the metric tables)",
     ]
     if cnn_available:
-        summary_lines.append(f"- CNN comparator included: `{cnn_model_name}`")
+        cnn_names = ", ".join(f"`{cnn_model['display_name']}`" for cnn_model in cnn_models)
+        summary_lines.append(f"- CNN comparators included: {cnn_names}")
     else:
         summary_lines.append("- CNN comparator not included: no local TorchScript weights were available.")
 

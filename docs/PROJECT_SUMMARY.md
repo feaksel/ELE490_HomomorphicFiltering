@@ -88,7 +88,7 @@ over-process fine paper texture.
 - Extended the workflow to RGB photos by converting them to grayscale first.
 - Built batch-style real-image comparisons for multiple scene types.
 
-### 4. Compared Against Simpler Alternatives
+### 4. Compared Against Simpler Alternatives And Learned Baselines
 
 - Implemented histogram-equalization comparisons.
 - Tested chest X-ray examples with both homomorphic filtering and histogram
@@ -96,6 +96,12 @@ over-process fine paper texture.
 - Tested document-page variants with histogram equalization before and after
   homomorphic filtering.
 - Tested CLAHE-based document variants.
+- Ran a Phase-2 comparison against two pretrained learned baselines:
+  Zero-DCE++ and a PyTorch port of RetinexNet. The homomorphic baseline
+  remains the synthetic-quality leader (SSIM `0.9380` versus `0.8665` and
+  `0.7624` for the two CNN baselines on the four controlled corruption
+  patterns). Results live in `results/experimental/` with a report-facing
+  summary figure at `results/final/cnn_comparison_showcase.png`.
 
 ### 5. Selected the Strongest Reporting Direction
 
@@ -107,7 +113,22 @@ over-process fine paper texture.
 - Promoted the page example as the strongest practical document-readability
   use case.
 
-### 6. Standardized the Final Showcase
+### 6. Validated The HSI Color Extension
+
+- Added `utils/hsi_pipeline.py` so the accepted grayscale pipeline can run on
+  the intensity channel of an RGB image while hue and saturation are
+  preserved.
+- Added `scripts/30_hsi_color_pipeline.py` which runs the pipeline on every
+  hard-case image, plus `scripts/31_hsi_cnn_color_comparison.py` which
+  produces side-by-side color comparisons against the two pretrained CNN
+  baselines.
+- HSI visually leads on the color comparison: hue and saturation stay
+  natural and shadows flatten without the bluish cast that the RetinexNet
+  port introduces, while Zero-DCE++ stays close to the original brightness.
+  See `results/final/hsi_cnn_color_comparison.png` and
+  `results/experimental/evaluation/hsi_cnn_all_color_overview.png`.
+
+### 7. Standardized the Final Showcase
 
 - Added a shared helper in `utils/showcase_pipeline.py`.
 - Unified the active scripts around the same regular pipeline.
@@ -127,6 +148,8 @@ The strongest current figures are:
 - `results/final/uniform_reference_comparison_overview.png`
 - `results/final/cardboard_uniform_reference_comparison.png`
 - `results/final/markers_uniform_reference_comparison.png`
+- `results/final/cnn_comparison_showcase.png`
+- `results/final/hsi_cnn_color_comparison.png`
 
 Note:
 Some filenames still contain older wording such as `hf_bright`, but the active
@@ -173,8 +196,9 @@ The cleanest practical framing for this project is:
 
 ## Remaining Gaps
 
-- the HSI color pipeline exists structurally but is not yet fully validated
-- most real-image evaluation is still qualitative
+- most real-image evaluation is still qualitative; the synthetic table backs
+  up the homomorphic baseline quantitatively, but the color HSI and CNN
+  comparisons are visual
 - scene-specific parameter choices should be described honestly in the report
 
 ## Recommended Next Step
