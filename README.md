@@ -31,7 +31,7 @@ conservative setting before the same tone-equalization step.
 - Real-scene grayscale demos are implemented for tunnel, flashlight, and multiple RGB photos converted to grayscale.
 - The Phase-2 comparison branch is complete: local-equalization (CLAHE/AHE) and two pretrained CNN baselines (Zero-DCE++ and a PyTorch port of RetinexNet) have been run against the homomorphic baseline. The homomorphic pipeline remains the synthetic-quality leader; see `results/experimental/evaluation/` and `results/final/cnn_comparison_showcase.png`.
 - The HSI color pipeline is validated. The accepted homomorphic + tone-equalization pipeline now runs end to end on color hard-case images through `utils/hsi_pipeline.py` and `scripts/30_hsi_color_pipeline.py`. Color comparison against the two CNN baselines is at `results/final/hsi_cnn_color_comparison.png` (representative set) and `results/experimental/evaluation/hsi_cnn_all_color_overview.png` (full set).
-- A downstream-task OCR benchmark on bad-scan handwriting (`writing.jpeg`) is in place: TrOCR `microsoft/trocr-large-handwritten` runs on each preprocessor's output and is scored with corpus CER/WER against manually-transcribed ground truth. HSI HF + Tone reduces corpus CER from 33.1 % to 25.2 % (~24 % relative); both project pipelines outperform Zero-DCE++ and RetinexNet. See `results/final/ocr_handwriting_comparison.png` and `results/experimental/ocr/`.
+- A downstream-task OCR benchmark is in place: TrOCR `microsoft/trocr-large-handwritten` runs on the severe bad-scan handwriting image (`writing.jpeg`, 8 manual lines) plus 30 deterministic Bentham historical handwriting lines. On `writing.jpeg`, HF + Tone reduces CER from 34.5 % to 20.9 %, while Sauvola gives 20.1 % and is the strongest classical OCR preprocessor for that sample. On Bentham, the original line crops are already strong, so preprocessing is not universally beneficial. See `results/final/ocr_handwriting_comparison.png` and `results/experimental/ocr/`.
 
 ## Setup
 
@@ -104,12 +104,21 @@ py -3.9 scripts/30_hsi_color_pipeline.py
 py -3.9 scripts/31_hsi_cnn_color_comparison.py
 py -3.9 scripts/32_ocr_handwriting_pipeline.py
 py -3.9 scripts/33_ocr_comparison_figure.py
+py -3.9 scripts/34_prepare_bentham_sample.py
 ```
 
-Scripts 32/33 also depend on the OCR-only Python packages
-`transformers`, `jiwer`, and `sentencepiece`. Install them on demand
-(they are not part of `requirements.txt` to keep the core install
-small).
+Scripts 32-34 use the OCR-only dependencies in `requirements-ocr.txt`:
+
+```bash
+pip install -r requirements-ocr.txt
+```
+
+Script 34 expects the Bentham R0 ground-truth archive at
+`data/bentham_raw/BenthamDatasetR0-GT.tbz` and regenerates the ignored
+`data/bentham_sample/` folder plus the 38-line OCR manifest. Tesseract is not
+required for the current OCR benchmark; on this machine the native Tesseract
+binary and Turkish language pack were not available, so Tesseract remains a
+future printed-document side experiment.
 
 Script `28_prepare_cnn_models.py` reads raw `.pth` / `.tar` weights from
 `models/zerodcepp/` and `models/retinexnet/` and writes TorchScript files

@@ -92,20 +92,37 @@
 - Status: accepted
 - Decision:
   Use handwriting OCR (TrOCR `microsoft/trocr-large-handwritten`) on
-  `writing.jpeg` as the project's quantitative real-image
-  validation. Each line is processed through (Original, HF + Tone
-  Gray, HSI HF + Tone, Zero-DCE++, RetinexNet); corpus CER and WER
-  are computed against manually-transcribed ground truth.
+  `writing.jpeg` as a quantitative real-image validation for the severe
+  flashlight-shadow handwriting case. Each line is processed through
+  Original, HF + Tone Gray, HSI HF + Tone, Sauvola, Zero-DCE++, and
+  RetinexNet; corpus CER and WER are computed against manually-transcribed
+  ground truth.
 - Why:
   Synthetic PSNR / SSIM already validates the method in a controlled
   setting, but `R-001` flagged that real-image success was only
   qualitative. A downstream task gives an honest quantitative
   improvement claim that does not rely on a "clean" reference for
-  real photos. On `writing.jpeg`, HSI HF + Tone reduces corpus CER
-  from `33.1 %` to `25.2 %` (-7.9 abs / ~24 % relative); HF + Tone
-  grayscale reduces CER to `26.6 %`. Both project pipelines
-  outperform Zero-DCE++ (`30.2 %`) and RetinexNet (`28.8 %`) on this
-  downstream consumer.
+  real photos. On the refined `writing.jpeg` manifest, HF + Tone reduces
+  corpus CER from `34.5 %` to `20.9 %`; HSI HF + Tone reduces it to
+  `24.5 %`; Sauvola reaches `20.1 %`. This supports the practical
+  readability claim while also adding a strong classical OCR baseline.
+
+### D-012 Expanded OCR Benchmark Narrows The Claim
+
+- Status: accepted
+- Decision:
+  Add a small public historical handwriting set (30 deterministic Bentham R0
+  test lines) to the OCR benchmark, but present the result as scope evidence
+  rather than proof of universal OCR improvement.
+- Why:
+  Bentham line crops are already much cleaner than `writing.jpeg`, and the
+  expanded run shows that preprocessing is not universally helpful there:
+  Original Bentham CER is `10.1 %`, while HF + Tone is `11.5 %`, HSI HF +
+  Tone is `11.3 %`, Sauvola is `11.6 %`, Zero-DCE++ is `10.4 %`, and
+  RetinexNet is `9.7 %`. The better final conclusion is that the project
+  pipeline helps the targeted uneven-illumination failure mode, not every
+  handwriting image. This is more rigorous and less overclaimed than the
+  original single-image-only result.
 
 ### D-010 HSI Color Pipeline Reuses The Accepted Grayscale Settings
 
@@ -227,12 +244,12 @@
 
 - Status: resolved
   (CNN comparison closed under `D-009`, HSI color pipeline validated
-  under `D-010`, downstream OCR readability validated under `D-011`).
+  under `D-010`, downstream OCR readability validated under `D-011` /
+  `D-012`).
 - Remaining optional follow-ups for future work:
-  - extending the handwriting OCR benchmark to additional bad-scan
-    samples for stronger n
-  - broader real-life application examples (X-ray, document
-    binarization, etc.)
+  - adding more genuinely degraded handwriting scans for stronger n
+  - adding a printed-document OCR branch once Tesseract is installed
+  - broader real-life application examples (X-ray, document binarization, etc.)
 
 ### P-002 Final Presentation Scope After Mid-Project Update
 

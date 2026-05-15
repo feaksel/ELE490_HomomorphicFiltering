@@ -65,11 +65,12 @@ These are the best files to attach in the main report or presentation:
   Strongest figure for showing that the project's classical pipeline
   preserves natural hue and saturation while still correcting illumination.
 - `results/final/ocr_handwriting_comparison.png`
-  Quantitative downstream-task figure. 4 representative lines x 5 methods
-  with TrOCR predictions, plus a corpus-level CER/WER bar chart. Backs up
-  the visual claims with numbers: HSI HF + Tone reduces corpus CER from
-  33.1 % to 25.2 % on the writing.jpeg sample; both project pipelines
-  outperform the two pretrained CNN baselines on this task.
+  Quantitative downstream-task figure. Representative `writing.jpeg` and
+  Bentham handwriting lines across 6 methods with TrOCR predictions, plus
+  dataset-split CER/WER bar charts. The key report point is nuanced:
+  preprocessing strongly helps the severe `writing.jpeg` scan (HF + Tone CER
+  `20.9 %`, Sauvola `20.1 %`, Original `34.5 %`), while Bentham shows that
+  already-legible historical line crops do not necessarily benefit.
 
 ### Good Appendix Attachments
 
@@ -94,8 +95,8 @@ These are useful in an appendix or backup section:
   across every hard case. Backs up the three-case
   `hsi_cnn_color_comparison.png` figure in `results/final/`.
 - `results/experimental/ocr/ocr_method_table.md`
-  Corpus CER / WER / runtime table for the OCR benchmark. The CSV
-  next to it can be used directly in a report appendix.
+  Dataset-split corpus CER / WER / runtime table for the expanded OCR
+  benchmark. The CSV next to it can be used directly in a report appendix.
 - `results/experimental/ocr/per_line_predictions.csv`
   Per-line predictions and CER values from each method. Good
   supporting evidence if a reviewer asks how individual lines

@@ -1,50 +1,384 @@
 [
   {
     "id": "writing_l1",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [40, 240, 1080, 350],
-    "transcript": "7 key OS Services"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      40,
+      235,
+      930,
+      345
+    ],
+    "transcript": "7 key OS Services",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
   },
   {
     "id": "writing_l2",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [110, 370, 1080, 490],
-    "transcript": "program development"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      35,
+      365,
+      800,
+      485
+    ],
+    "transcript": "program development",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
   },
   {
     "id": "writing_l3",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [130, 490, 750, 590],
-    "transcript": "program exec"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      75,
+      500,
+      760,
+      585
+    ],
+    "transcript": "program exec",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
   },
   {
     "id": "writing_l4",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [130, 595, 780, 685],
-    "transcript": "I/O access"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      70,
+      600,
+      780,
+      680
+    ],
+    "transcript": "I/O access",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
   },
   {
     "id": "writing_l5",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [130, 690, 1050, 795],
-    "transcript": "controlled file access"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      75,
+      700,
+      1060,
+      790
+    ],
+    "transcript": "controlled file access",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
   },
   {
     "id": "writing_l6",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [130, 795, 1080, 890],
-    "transcript": "system access control"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      75,
+      805,
+      1110,
+      885
+    ],
+    "transcript": "system access control",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
   },
   {
     "id": "writing_l7",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [130, 885, 1180, 985],
-    "transcript": "error detection and response"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      70,
+      895,
+      1190,
+      980
+    ],
+    "transcript": "error detection and response",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
   },
   {
     "id": "writing_l8",
-    "image": "images/writing.jpeg",
-    "bbox_abs": [120, 985, 700, 1080],
-    "transcript": "accounting"
+    "dataset": "writing_jpeg",
+    "source_image": "images/writing.jpeg",
+    "bbox_abs": [
+      80,
+      990,
+      710,
+      1085
+    ],
+    "transcript": "accounting",
+    "split": "manual",
+    "source": "manual bad-scan writing.jpeg line crop"
+  },
+  {
+    "id": "bentham_071_021_002_04_13",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/071_021_002_04_13.png",
+    "bbox_abs": null,
+    "transcript": "=tion immediately relates, whether",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_071_022_003_04_09",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/071_022_003_04_09.png",
+    "bbox_abs": null,
+    "transcript": "bar of the same size were both lying within your reach:",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_071_030_001_04_08",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/071_030_001_04_08.png",
+    "bbox_abs": null,
+    "transcript": "Irreparable Disfigurement is where in the shape or colour",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_071_151_003_04_01",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/071_151_003_04_01.png",
+    "bbox_abs": null,
+    "transcript": "particular regulations can be of service will need to be different",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_071_151_003_04_17",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/071_151_003_04_17.png",
+    "bbox_abs": null,
+    "transcript": "Tit. Of Jurisdiction.",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_071_163_004_04_18",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/071_163_004_04_18.png",
+    "bbox_abs": null,
+    "transcript": "are introductory.",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_071_181_004_03_01",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/071_181_004_03_01.png",
+    "bbox_abs": null,
+    "transcript": "Of Frauds relative to the Coin.",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_072_050_003_04_17",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/072_050_003_04_17.png",
+    "bbox_abs": null,
+    "transcript": "may occur for preventing the offence . This holds good more",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_072_069_002_04_03",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/072_069_002_04_03.png",
+    "bbox_abs": null,
+    "transcript": "any of them have failed, in that case Justice cannot",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_072_069_002_04_10",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/072_069_002_04_10.png",
+    "bbox_abs": null,
+    "transcript": ":gislation: for as long as the Legislator can devise any",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_073_002_002_01_03",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/073_002_002_01_03.png",
+    "bbox_abs": null,
+    "transcript": "ing four Guineas for four Volumes of his Truths,",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_073_083_001_03_08",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/073_083_001_03_08.png",
+    "bbox_abs": null,
+    "transcript": "If your intention was to strike him in the leg in such",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_097_186_001_01_05",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/097_186_001_01_05.png",
+    "bbox_abs": null,
+    "transcript": "you can have of the nature of his duty rendering such fatigue",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_097_186_001_01_31",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/097_186_001_01_31.png",
+    "bbox_abs": null,
+    "transcript": "industrious and well disposed become a continual prey to the",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_007_002_01_21",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_007_002_01_21.png",
+    "bbox_abs": null,
+    "transcript": "and spirituous liquor, unless where ordered in the",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_009_002_02_15",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_009_002_02_15.png",
+    "bbox_abs": null,
+    "transcript": "obliged as in other places, to desist from their work,",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_070_002_02_17",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_070_002_02_17.png",
+    "bbox_abs": null,
+    "transcript": "so seized and possessed as aforesaid : the value of such Build-",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_077_002_02_05",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_077_002_02_05.png",
+    "bbox_abs": null,
+    "transcript": "shall deem necessary and expedient, and shall cause",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_077_002_02_06",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_077_002_02_06.png",
+    "bbox_abs": null,
+    "transcript": "to be inserted in such Contract or Contracts such law-",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_077_002_02_07",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_077_002_02_07.png",
+    "bbox_abs": null,
+    "transcript": "-ful clauses, covenants and agreements, as shall be re-",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_080_003_02_03",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_080_003_02_03.png",
+    "bbox_abs": null,
+    "transcript": "made to such prisoners in manner herein after",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_080_003_02_28",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_080_003_02_28.png",
+    "bbox_abs": null,
+    "transcript": "in as far as the same shall have been prescribed",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_115_111_004_02_13",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/115_111_004_02_13.png",
+    "bbox_abs": null,
+    "transcript": "Government, in treaty on his own account with the",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_116_064_001_02_05",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/116_064_001_02_05.png",
+    "bbox_abs": null,
+    "transcript": "\"civilize these people proved fruitless. Although they lived among",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_116_064_001_02_20",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/116_064_001_02_20.png",
+    "bbox_abs": null,
+    "transcript": "\"brought up in the settlement from their childhood, was cruelly",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_116_072_001_02_04",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/116_072_001_02_04.png",
+    "bbox_abs": null,
+    "transcript": "\"a great benefit to the public, but be also highly to the advantage",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_116_286_002_02_28",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/116_286_002_02_28.png",
+    "bbox_abs": null,
+    "transcript": "no one of them was pursued) is scarce worth arguing about.",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_116_387_001_01_23",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/116_387_001_01_23.png",
+    "bbox_abs": null,
+    "transcript": "difference.]",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_116_406_001_01_21",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/116_406_001_01_21.png",
+    "bbox_abs": null,
+    "transcript": "are sentence of temporary imprisonment, should",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
+  },
+  {
+    "id": "bentham_116_633_002_02_01",
+    "dataset": "bentham",
+    "source_image": "data/bentham_sample/images/116_633_002_02_01.png",
+    "bbox_abs": null,
+    "transcript": "few drops from it to save this worthy gentleman.",
+    "split": "test",
+    "source": "Bentham R0 ICFHR 2014 HTR competition test line"
   }
 ]

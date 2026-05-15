@@ -187,7 +187,8 @@
   crops lines from each method's output, computes corpus CER and WER
   via jiwer) and `scripts/33_ocr_comparison_figure.py` (builds the
   report-facing comparison figure).
-- Headline OCR numbers (corpus-level over 8 lines):
+- First-pass OCR numbers (corpus-level over 8 lines, later superseded by the
+  expanded 2026-05-15 run):
   - Original: CER `33.1 %`, WER `90.5 %`
   - HF + Tone (Gray): CER `26.6 %`, WER `76.2 %`
   - HSI HF + Tone: CER `25.2 %`, WER `76.2 %`
@@ -197,6 +198,43 @@
   points; ~24% relative). Both project pipelines outperform both
   pretrained CNN baselines on this downstream task. Promoted figure
   at `results/final/ocr_handwriting_comparison.png`.
+
+## 2026-05-15
+
+- Expanded the OCR evidence pass beyond the single `writing.jpeg` image.
+- Added `scripts/34_prepare_bentham_sample.py`, which reads the Bentham R0
+  ground-truth archive, samples 30 clean visible-text test lines with seed
+  `490`, extracts line images/transcripts under ignored `data/bentham_sample/`,
+  and rewrites `configs/handwriting_lines_manifest.json`.
+- Refactored `scripts/32_ocr_handwriting_pipeline.py` so the OCR benchmark is
+  manifest-driven and can mix cropped source images (`writing.jpeg`) with
+  already-cropped line images (Bentham). It now records dataset, model id,
+  preprocessing runtime, OCR runtime, CER, and WER.
+- Added Sauvola binarization as a classical document-OCR baseline and included
+  it in the OCR comparison next to Original, HF + Tone, HSI HF + Tone,
+  Zero-DCE++, and RetinexNet.
+- Refactored `scripts/33_ocr_comparison_figure.py` to render representative
+  lines from both `writing.jpeg` and Bentham plus dataset-split CER/WER bars.
+- Updated OCR dependencies in `requirements-ocr.txt`. Tesseract/pytesseract
+  were checked separately: `pytesseract` was not installed initially, and the
+  native `tesseract` binary was not on PATH, so Tesseract is documented as a
+  future printed-OCR side experiment rather than a blocker.
+- Full expanded OCR run used TrOCR `microsoft/trocr-large-handwritten` on
+  38 lines x 6 methods = 228 predictions. Headline corpus CER / WER:
+  - `writing.jpeg`: Original `34.5 / 90.5`, HF + Tone `20.9 / 57.1`,
+    HSI HF + Tone `24.5 / 66.7`, Sauvola `20.1 / 61.9`,
+    Zero-DCE++ `21.6 / 76.2`, RetinexNet `25.2 / 76.2`.
+  - Bentham: Original `10.1 / 35.4`, HF + Tone `11.5 / 39.2`,
+    HSI HF + Tone `11.3 / 39.2`, Sauvola `11.6 / 38.4`,
+    Zero-DCE++ `10.4 / 35.0`, RetinexNet `9.7 / 33.8`.
+  - All 38 lines: Original `12.2 / 39.4`, HF + Tone `12.3 / 40.5`,
+    HSI HF + Tone `12.5 / 41.2`, Sauvola `12.3 / 40.1`,
+    Zero-DCE++ `11.4 / 38.0`, RetinexNet `11.0 / 37.0`.
+- Interpretation changed from "our pipeline always wins OCR" to the stronger
+  and more honest claim: illumination correction clearly helps the severe
+  flashlight-shadow `writing.jpeg` sample, Sauvola is a strong classical OCR
+  comparator there, and Bentham shows preprocessing can be unnecessary or
+  mildly harmful on already-legible historical line crops.
 
 ## Current Active Result Files
 

@@ -82,6 +82,27 @@ def equalize_clahe(image_array, tile_size, clip_limit):
     return np.clip(255.0 * equalized, 0, 255).astype(np.uint8)
 
 
+def apply_sauvola_binarization(image_uint8, window_size=25, k=0.2):
+    """
+    Sauvola (2000) local adaptive thresholding. Standard classical baseline for
+    document-binarization preprocessing.
+
+    Returns a uint8 RGB image where ink pixels are black (0) and paper is white
+    (255), broadcast to 3 channels so downstream consumers (TrOCR) can take it
+    as RGB without a separate code path.
+    """
+    from skimage.filters import threshold_sauvola
+
+    # skimage's threshold_sauvola defaults its `r` (dynamic-range divisor)
+    # from the dtype range, which becomes 1.0 for float64 input. Pass r=128
+    # explicitly so the threshold is computed on the standard 0-255 scale.
+    image_float = image_uint8.astype(np.float64)
+    threshold_map = threshold_sauvola(image_float, window_size=window_size, k=k, r=128.0)
+    binary_mask = image_float >= threshold_map
+    binary_uint8 = (binary_mask.astype(np.uint8)) * 255
+    return np.stack([binary_uint8] * 3, axis=-1)
+
+
 def apply_high_boost(image_uint8, sigma=1.2, amount=0.65):
     image_float = image_uint8.astype(np.float64) / 255.0
     blurred = gaussian(image_float, sigma=sigma, preserve_range=True)

@@ -40,9 +40,10 @@ The `experimental/` branch is intentionally separate from the accepted
 `final/` showcase so new methods can be tested without changing the current
 report-facing narrative. `experimental/cnn/` holds per-model inference
 outputs and CSV metrics for Zero-DCE++ and RetinexNet; `experimental/hsi/`
-holds the color HSI pipeline outputs; `experimental/ocr/` holds the
-handwriting OCR readability benchmark (TrOCR predictions, per-line CSV,
-corpus CER / WER table, line crops per method); `experimental/evaluation/`
+holds the color HSI pipeline outputs; `experimental/ocr/` holds the expanded
+handwriting OCR readability benchmark (`writing.jpeg` + Bentham, TrOCR
+predictions, per-line CSV, dataset-split corpus CER / WER table, and line
+crops per method); `experimental/evaluation/`
 aggregates the synthetic and proxy metrics next to the homomorphic and
 CLAHE baselines, and produces both the representative-set overview
 (`hard_case_visual_overview.png`) and the all-cases overview

@@ -25,3 +25,9 @@ Thumbs.db
 
 # Archived docs
 docs/olds/
+
+# Large/generated OCR benchmark data
+data/bentham_raw/
+data/bentham_sample/
+results/experimental/ocr/_*.png
+results/experimental/ocr_smoke/

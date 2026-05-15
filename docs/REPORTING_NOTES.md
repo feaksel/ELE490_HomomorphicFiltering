@@ -16,6 +16,7 @@ homomorphic stage is followed by the project's regular tone-equalization step.
 - `results/final/seat_pillar_detail_comparison.png`
 - `results/final/page_conservative_hf_comparison.png`
 - `results/final/page_detail_comparison.png`
+- `results/final/ocr_handwriting_comparison.png`
 
 ## Best Examples To Talk About
 
@@ -34,8 +35,10 @@ homomorphic stage is followed by the project's regular tone-equalization step.
 - Homomorphic filtering reduces broad illumination variation across the page.
 - A page-specific conservative setting followed by tone equalization gives the
   best readability-preserving result.
-- This supports possible use as document enhancement or preprocessing before
-  OCR, but we should not claim OCR improvement unless we measure it.
+- OCR has now been measured on handwriting: the severe `writing.jpeg` sample
+  improves strongly after preprocessing, while Bentham shows that clean
+  historical line crops may not need it. Present OCR as practical scope
+  evidence, not as a universal benchmark win.
 
 ## What Not To Overclaim
 
@@ -58,3 +61,5 @@ homomorphic stage is followed by the project's regular tone-equalization step.
   demonstrations?
 - Is the document-readability use case valuable enough to highlight as a real
   application example?
+- If time remains, should a printed-page Tesseract branch be added after
+  installing the native Tesseract binary?

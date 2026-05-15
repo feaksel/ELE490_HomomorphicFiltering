@@ -126,9 +126,10 @@
 - Mitigation:
   Phrase conclusions as visual improvement under uneven illumination, not as
   guaranteed correction. Additionally, the downstream handwriting OCR
-  benchmark on `writing.jpeg` (see `D-011`) now provides a quantitative real-
-  image readability number (corpus CER and WER vs manually-transcribed
-  ground truth) that supports the visual claims without overstating them.
+  benchmark on `writing.jpeg` and Bentham (see `D-011` / `D-012`) now provides
+  quantitative readability numbers (corpus CER and WER vs transcripts). The
+  results should be phrased as support for the targeted uneven-illumination
+  case, not as a universal OCR improvement claim.
 
 ### R-002 Overprocessing Fine Texture
 
@@ -148,22 +149,20 @@
   Explicitly document that the page is a special readability-focused document
   case rather than a general real-scene texture case.
 
-### R-006 Single-Image OCR Benchmark Has Limited Statistical Power
+### R-006 OCR Benchmark Is Still Small And Dataset-Dependent
 
 - Risk:
-  The handwriting OCR benchmark (`D-011`) is run on a single image
-  (`writing.jpeg`, 8 lines, single writer). Eight lines of one writer in
-  one lighting condition is informative but not statistically robust;
-  the ranking of methods could flip with a different writer or scan.
+  The OCR benchmark now includes `writing.jpeg` (8 manually-transcribed lines)
+  and 30 public Bentham historical handwriting lines, but it is still small.
+  Bentham is also not the same corruption type: its line crops are already
+  fairly legible historical manuscript snippets, not flashlight-shadow phone
+  scans. Method rankings differ by dataset.
 - Mitigation:
-  Frame the result as evidence-of-concept on a real bad-scan sample
-  representative of "flashlight beam plus dark shadow plus yellow color
-  cast" — the corruption type this project targets — rather than as a
-  general benchmark claim. Note the ranking is consistent with what the
-  synthetic SSIM table shows and with the visual color comparison;
-  three independent kinds of evidence pointing in the same direction
-  is the strongest interpretation. Add more bad-scan samples in future
-  work for stronger n.
+  Frame the OCR result as evidence about scope. The project methods and
+  Sauvola strongly improve the severe `writing.jpeg` sample, while Bentham
+  shows that preprocessing can be unnecessary or mildly harmful on cleaner
+  line crops. Future work should add more genuinely degraded handwriting scans
+  and, separately, a printed-document OCR branch once Tesseract is installed.
 
 ### R-005 Pretrained CNN Comparison Is Not a Like-For-Like Test
 

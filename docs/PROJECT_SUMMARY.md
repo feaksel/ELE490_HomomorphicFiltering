@@ -116,16 +116,22 @@ over-process fine paper texture.
 ### 6. Added A Quantitative Downstream-Task Result (Handwriting OCR)
 
 - Added `scripts/32_ocr_handwriting_pipeline.py` which runs
-  `microsoft/trocr-large-handwritten` on each line of `writing.jpeg`
-  (real handwriting under a flashlight beam + dark shadow + yellow
-  color cast) after each preprocessor and computes corpus CER and WER
-  against manually-transcribed ground truth.
+  `microsoft/trocr-large-handwritten` on each line after each preprocessor and
+  computes corpus CER and WER against transcripts.
+- Added `scripts/34_prepare_bentham_sample.py`, which reproducibly samples 30
+  clean visible-text Bentham R0 test lines and rewrites the OCR manifest.
 - Added `scripts/33_ocr_comparison_figure.py` which produces the
   report-facing figure at `results/final/ocr_handwriting_comparison.png`.
-- Headline result: HSI HF + Tone reduces corpus CER from `33.1 %` to
-  `25.2 %` (-7.9 absolute points, ~24 % relative). HF + Tone (grayscale)
-  reduces CER to `26.6 %`. Both project pipelines outperform Zero-DCE++
-  (`30.2 %`) and RetinexNet (`28.8 %`) on this downstream consumer.
+- Current benchmark: 8 lines from severe bad-scan `writing.jpeg` plus 30
+  Bentham historical handwriting line crops, compared across Original,
+  HF + Tone, HSI HF + Tone, Sauvola, Zero-DCE++, and RetinexNet.
+- Headline result on `writing.jpeg`: Original CER/WER is `34.5 % / 90.5 %`;
+  HF + Tone improves to `20.9 % / 57.1 %`; Sauvola is also strong at
+  `20.1 % / 61.9 %`; HSI HF + Tone is `24.5 % / 66.7 %`.
+- Bentham result: Original is already strong (`10.1 % / 35.4 %`), and the
+  project preprocessors are slightly worse there. This narrows the claim:
+  illumination correction helps the targeted flashlight-shadow failure mode,
+  but it is not a universal handwriting-OCR preprocessor.
 
 ### 7. Validated The HSI Color Extension
 
@@ -211,15 +217,14 @@ The cleanest practical framing for this project is:
 
 ## Remaining Gaps
 
-- the OCR benchmark is run on a single handwriting image (8 lines, single
-  writer); statistical power is limited (see `R-006`). The ranking is
-  consistent with the synthetic SSIM table and the visual color comparison,
-  so the three lines of evidence reinforce each other.
+- the OCR benchmark is still small and dataset-dependent (8 `writing.jpeg`
+  lines + 30 Bentham lines). It is stronger than the original single-image
+  result, but should still be framed as practical evidence, not a broad OCR
+  benchmark.
 - scene-specific parameter choices should be described honestly in the report
 
 ## Recommended Next Step
 
-The OCR downstream-task result now exists; the strongest follow-up would be
-to extend the handwriting OCR benchmark to additional bad-scan samples for
-stronger statistical power, or to add a printed-document OCR benchmark on the
-`page` case using Tesseract.
+The strongest follow-up would be to add more genuinely degraded handwriting
+scans that match the `writing.jpeg` corruption type, or to add a printed-page
+OCR branch once native Tesseract and the needed language packs are installed.

@@ -1,0 +1,7 @@
+# OCR-only dependencies for scripts/32-34.
+# pytesseract is optional and still requires the native Tesseract binary plus
+# language packs to be installed separately.
+torch
+transformers
+jiwer
+pytesseract
